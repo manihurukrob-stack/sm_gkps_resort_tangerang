@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GKPS Tangerang - Admin Dashboard</title>
+  <link rel="stylesheet" href="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.css" />
+  <style>
+    /* Custom styling untuk GKPS Tangerang */
+    :root {
+      --primary-color: #1e3a5f;
+      --secondary-color: #c9a227;
+    }
+    
+    .nc-appHeader-content {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2a4a73 100%);
+    }
+    
+    .nc-appHeader-logo {
+      color: #c9a227 !important;
+      font-weight: 600;
+    }
+    
+    .nc-entryEditor-container {
+      background: #f8f9fa;
+    }
+    
+    .nc-collectionPage-container {
+      background: #ffffff;
+    }
+    
+    /* Custom button styling */
+    .nc-button-primary {
+      background: #c9a227 !important;
+      border-color: #c9a227 !important;
+    }
+    
+    .nc-button-primary:hover {
+      background: #a88820 !important;
+      border-color: #a88820 !important;
+    }
+    
+    /* Sidebar styling */
+    .nc-sidebar {
+      background: #1e3a5f !important;
+    }
+    
+    .nc-sidebar-navLink {
+      color: rgba(255,255,255,0.8) !important;
+    }
+    
+    .nc-sidebar-navLink:hover,
+    .nc-sidebar-navLink-active {
+      color: #c9a227 !important;
+      background: rgba(201, 162, 39, 0.1) !important;
+    }
+    
+    /* Card styling */
+    .nc-card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .nc-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+  </style>
+</head>
+<body>
+  <!-- Load Decap CMS -->
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  
+  <script>
+    // Konfigurasi CMS
+    CMS.init({
+      config: {
+        backend: {
+          name: 'git-gateway',
+          branch: 'main',
+          commit_messages: {
+            create: 'Create {{collection}} "{{slug}}"',
+            update: 'Update {{collection}} "{{slug}}"',
+            delete: 'Delete {{collection}} "{{slug}}"',
+            uploadMedia: 'Upload "{{path}}"',
+            deleteMedia: 'Delete "{{path}}"'
+          }
+        },
+        
+        // Publish mode
+        publish_mode: 'editorial_workflow',
+        
+        // Media folder
+        media_folder: 'public/uploads',
+        public_folder: '/uploads',
+        
+        // Collections
+        collections: [
+          {
+            name: 'jadwal-ibadah',
+            label: '📅 Jadwal Ibadah',
+            folder: 'content/jadwal-ibadah',
+            create: true,
+            slug: '{{hari}}-{{title}}',
+            fields: [
+              {
+                label: 'Judul Ibadah',
+                name: 'title',
+                widget: 'string',
+                required: true
+              },
+              {
+                label: 'Hari',
+                name: 'hari',
+                widget: 'select',
+                options: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+                required: true
+              },
+              {
+                label: 'Waktu',
+                name: 'waktu',
+                widget: 'string',
+                required: true,
+                hint: 'Contoh: 08:00 WIB'
+              },
+              {
+                label: 'Lokasi',
+                name: 'lokasi',
+                widget: 'string',
+                required: true,
+                hint: 'Contoh: Gedung Utama GKPS Tangerang'
+              },
+              {
+                label: 'Ikon',
+                name: 'icon',
+                widget: 'select',
+                options: [
+                  { label: '☀️ Matahari (Pagi)', value: 'sun' },
+                  { label: '🌙 Bulan (Sore/Malam)', value: 'moon' },
+                  { label: '👥 Keluarga', value: 'users' },
+                  { label: '📖 Alkitab', value: 'book' },
+                  { label: '🎵 Musik', value: 'music' },
+                  { label: '🙏 Doa', value: 'pray' }
+                ],
+                default: 'sun'
+              },
+              {
+                label: 'Warna Tema',
+                name: 'color',
+                widget: 'select',
+                options: [
+                  { label: '🟠 Pagi (Oranye)', value: 'from-amber-400 to-orange-500' },
+                  { label: '🔵 Malam (Biru)', value: 'from-indigo-400 to-purple-500' },
+                  { label: '🟢 Keluarga (Hijau)', value: 'from-emerald-400 to-teal-500' },
+                  { label: '🔴 Merah', value: 'from-rose-400 to-red-500' },
+                  { label: '🟣 Ungu', value: 'from-purple-400 to-pink-500' },
+                  { label: '🔵 Biru Muda', value: 'from-sky-400 to-blue-500' }
+                ],
+                default: 'from-amber-400 to-orange-500'
+              },
+              {
+                label: 'Aktif',
+                name: 'active',
+                widget: 'boolean',
+                default: true
+              },
+              {
+                label: 'Urutan',
+                name: 'order',
+                widget: 'number',
+                default: 1,
+                value_type: 'int',
+                min: 1,
+                max: 10
+              }
+            ]
+          },
+          
+          {
+            name: 'pengumuman',
+            label: '📢 Pengumuman',
+            folder: 'content/pengumuman',
+            create: true,
+            slug: '{{year}}-{{month}}-{{day}}-{{title}}',
+            fields: [
+              {
+                label: 'Judul Pengumuman',
+                name: 'title',
+                widget: 'string',
+                required: true
+              },
+              {
+                label: 'Tanggal',
+                name: 'date',
+                widget: 'datetime',
+                date_format: 'DD MMMM YYYY',
+                time_format: false,
+                required: true
+              },
+              {
+                label: 'Kategori',
+                name: 'kategori',
+                widget: 'select',
+                options: [
+                  { label: '🎉 Perayaan', value: 'Perayaan' },
+                  { label: '👦 Pemuda', value: 'Pemuda' },
+                  { label: '🎵 Pelayanan', value: 'Pelayanan' },
+                  { label: '❤️ Sosial', value: 'Sosial' },
+                  { label: '📚 Pendidikan', value: 'Pendidikan' },
+                  { label: '🏠 Umum', value: 'Umum' }
+                ],
+                default: 'Umum'
+              },
+              {
+                label: 'Featured (Tampilkan di atas)',
+                name: 'featured',
+                widget: 'boolean',
+                default: false,
+                hint: 'Centang untuk menampilkan sebagai pengumuman utama'
+              },
+              {
+                label: 'Ringkasan',
+                name: 'ringkasan',
+                widget: 'text',
+                required: true,
+                hint: 'Ringkasan singkat pengumuman (maks 200 karakter)'
+              },
+              {
+                label: 'Konten Lengkap',
+                name: 'body',
+                widget: 'markdown',
+                required: false,
+                hint: 'Isi lengkap pengumuman (bisa dikosongkan)'
+              },
+              {
+                label: 'Gambar',
+                name: 'image',
+                widget: 'image',
+                required: false,
+                hint: 'Upload gambar untuk pengumuman (opsional)'
+              },
+              {
+                label: 'Link Tindakan',
+                name: 'action_link',
+                widget: 'string',
+                required: false,
+                hint: 'Link untuk tombol "Baca Selengkapnya" (opsional)'
+              },
+              {
+                label: 'Aktif',
+                name: 'active',
+                widget: 'boolean',
+                default: true
+              }
+            ]
+          },
+          
+          {
+            name: 'tata-ibadah',
+            label: '📖 Tata Ibadah',
+            folder: 'content/tata-ibadah',
+            create: true,
+            slug: '{{hari}}-{{title}}',
+            fields: [
+              {
+                label: 'Tema',
+                name: 'title',
+                widget: 'string',
+                required: true
+              },
+              {
+                label: 'Hari',
+                name: 'hari',
+                widget: 'select',
+                options: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+                required: true
+              },
+              {
+                label: 'Tanggal',
+                name: 'tanggal',
+                widget: 'datetime',
+                date_format: 'DD MMMM YYYY',
+                time_format: false,
+                required: true
+              },
+              {
+                label: 'Bahan Alkitab',
+                name: 'bahan',
+                widget: 'string',
+                required: true,
+                hint: 'Contoh: Efesus 4:1-6'
+              },
+              {
+                label: 'Ringkasan',
+                name: 'ringkasan',
+                widget: 'text',
+                required: true
+              },
+              {
+                label: 'Konten Lengkap',
+                name: 'body',
+                widget: 'markdown',
+                required: false
+              },
+              {
+                label: 'Aktif',
+                name: 'active',
+                widget: 'boolean',
+                default: true
+              }
+            ]
+          },
+          
+          {
+            name: 'halaman',
+            label: '📄 Halaman Statis',
+            folder: 'content/halaman',
+            create: true,
+            slug: '{{title}}',
+            fields: [
+              {
+                label: 'Judul Halaman',
+                name: 'title',
+                widget: 'string',
+                required: true
+              },
+              {
+                label: 'URL Slug',
+                name: 'slug',
+                widget: 'string',
+                required: true,
+                hint: 'Contoh: tentang-kami, sejarah-gereja'
+              },
+              {
+                label: 'Deskripsi Meta',
+                name: 'description',
+                widget: 'text',
+                required: false,
+                hint: 'Untuk SEO (muncul di hasil pencarian Google)'
+              },
+              {
+                label: 'Tampilkan di Navigasi',
+                name: 'show_in_nav',
+                widget: 'boolean',
+                default: false,
+                hint: 'Centang untuk menampilkan di menu header'
+              },
+              {
+                label: 'Urutan di Navigasi',
+                name: 'nav_order',
+                widget: 'number',
+                default: 1,
+                value_type: 'int',
+                min: 1,
+                max: 10
+              },
+              {
+                label: 'Konten',
+                name: 'body',
+                widget: 'markdown',
+                required: true
+              },
+              {
+                label: 'Gambar Header',
+                name: 'header_image',
+                widget: 'image',
+                required: false
+              },
+              {
+                label: 'Aktif',
+                name: 'active',
+                widget: 'boolean',
+                default: true
+              }
+            ]
+          },
+          
+          {
+            name: 'pengaturan',
+            label: '⚙️ Pengaturan Website',
+            folder: 'content/pengaturan',
+            create: false,
+            delete: false,
+            files: [
+              {
+                name: 'info-gereja',
+                label: 'Informasi Gereja',
+                file: 'content/pengaturan/info-gereja.json',
+                fields: [
+                  {
+                    label: 'Nama Gereja',
+                    name: 'nama',
+                    widget: 'string',
+                    default: 'GKPS Tangerang'
+                  },
+                  {
+                    label: 'Tagline',
+                    name: 'tagline',
+                    widget: 'string',
+                    default: 'Gereja yang hangat, welas asih, dan bertumbuh dalam iman'
+                  },
+                  {
+                    label: 'Alamat Lengkap',
+                    name: 'alamat',
+                    widget: 'text'
+                  },
+                  {
+                    label: 'Telepon',
+                    name: 'telepon',
+                    widget: 'string'
+                  },
+                  {
+                    label: 'Email',
+                    name: 'email',
+                    widget: 'string'
+                  },
+                  {
+                    label: 'Link Live Streaming',
+                    name: 'live_streaming_url',
+                    widget: 'string',
+                    required: false
+                  },
+                  {
+                    label: 'Link Facebook',
+                    name: 'facebook_url',
+                    widget: 'string',
+                    required: false
+                  },
+                  {
+                    label: 'Link Instagram',
+                    name: 'instagram_url',
+                    widget: 'string',
+                    required: false
+                  },
+                  {
+                    label: 'Link YouTube',
+                    name: 'youtube_url',
+                    widget: 'string',
+                    required: false
+                  }
+                ]
+              },
+              
+              {
+                name: 'hero-section',
+                label: 'Hero Section (Halaman Depan)',
+                file: 'content/pengaturan/hero-section.json',
+                fields: [
+                  {
+                    label: 'Eyebrow Text',
+                    name: 'eyebrow',
+                    widget: 'string',
+                    default: 'Selamat Datang di'
+                  },
+                  {
+                    label: 'Headline Baris 1',
+                    name: 'headline_1',
+                    widget: 'string',
+                    default: 'GKPS'
+                  },
+                  {
+                    label: 'Headline Baris 2',
+                    name: 'headline_2',
+                    widget: 'string',
+                    default: 'Tangerang'
+                  },
+                  {
+                    label: 'Subheadline',
+                    name: 'subheadline',
+                    widget: 'text',
+                    default: 'Gereja yang hangat, welas asih, dan bertumbuh dalam iman — menjadi berkat bagi sesama.'
+                  },
+                  {
+                    label: 'Gambar Background',
+                    name: 'background_image',
+                    widget: 'image',
+                    required: false
+                  },
+                  {
+                    label: 'Tombol Primary',
+                    name: 'cta_primary_text',
+                    widget: 'string',
+                    default: 'Jadwal Ibadah'
+                  },
+                  {
+                    label: 'Link Tombol Primary',
+                    name: 'cta_primary_link',
+                    widget: 'string',
+                    default: '#jadwal'
+                  },
+                  {
+                    label: 'Tombol Secondary',
+                    name: 'cta_secondary_text',
+                    widget: 'string',
+                    default: 'Live Streaming'
+                  },
+                  {
+                    label: 'Link Tombol Secondary',
+                    name: 'cta_secondary_link',
+                    widget: 'string',
+                    default: '#kontak'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    });
+  </script>
+</body>
+</html>
