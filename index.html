@@ -10,7 +10,7 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
 
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -530,21 +530,20 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--t
 <div class="toast" id="toast"></div>
 <script>
 // ==================== FIREBASE CONFIGURATION ====================
-// ⚠️ PENTING: Ganti dengan konfigurasi Firebase Anda sendiri!
-// Daftar di https://console.firebase.google.com/
 const firebaseConfig = {
-  apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  authDomain: "gsm-planner-2026.firebaseapp.com",
-  projectId: "gsm-planner-2026",
-  storageBucket: "gsm-planner-2026.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef123456"
+  apiKey: "AIzaSyBdmUbkomgKkpiuVs-V-oIwBl259-NVog8",
+  authDomain: "gsm-planner.firebaseapp.com",
+  projectId: "gsm-planner",
+  storageBucket: "gsm-planner.firebasestorage.app",
+  messagingSenderId: "461817476456",
+  appId: "1:461817476456:web:0fffebf3c4a6956d3392dd",
+  measurementId: "G-4TV1YYY6VR"
 };
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const auth = firebase.auth();
+const analytics = firebase.analytics();
 
 // ==================== DEFAULT DATA ====================
 const defaultPrograms = [
@@ -618,7 +617,6 @@ async function loadFromFirebase() {
         updateStats();
         renderKpiDashboard();
       } else {
-        // Initialize with default data
         saveToFirebase('programs', defaultPrograms);
       }
     });
@@ -678,7 +676,7 @@ async function loadFromFirebase() {
   } catch (error) {
     console.error('Error loading from Firebase:', error);
     showSyncStatus('Gagal sinkronisasi', false);
-    showToast('Gagal terhubung ke Firebase. Periksa konfigurasi.', 'error');
+    showToast('Gagal terhubung ke Firebase.', 'error');
   }
 }
 
@@ -714,9 +712,8 @@ function init() {
   checkAdminSession();
 }
 
-// ==================== DATA MANAGEMENT (Local + Firebase) ====================
+// ==================== DATA MANAGEMENT ====================
 function saveData() {
-  // Save to Firebase (will sync to all devices)
   saveToFirebase('programs', programsData);
   saveToFirebase('finance', financeData);
   saveToFirebase('meetings', meetingsData);
@@ -1155,7 +1152,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
   e.preventDefault();
   const username = document.getElementById('adminUsername').value.trim(), password = document.getElementById('adminPassword').value;
   
-  // Check against users in Firebase
   const snapshot = await db.collection('gsm_users').where('username', '==', username).where('password', '==', password).where('status', '==', 'active').get();
   
   if (!snapshot.empty) {
@@ -1177,7 +1173,6 @@ function showToast(message, type = 'success') { const toast = document.getElemen
 
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeViewModalDirect(); closeEditModal(); closeFinanceModal(); closeUploadNotulenModal(); closeEditNotulenModal(); closeKpiSettingsModal(); closeKpiProgramModal(); closeLoginModal(); closeUserModal(); } });
 
-// Initialize on load
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
