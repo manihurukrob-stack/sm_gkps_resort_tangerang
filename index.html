@@ -10,6 +10,10 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -1765,9 +1769,14 @@
             <div class="kpi-chart-container">
                 <div class="kpi-chart-header">
                     <h3><i class="fas fa-chart-bar"></i> Progress KPI per Kategori</h3>
-                    <button class="btn btn-purple" onclick="exportKpiReport()">
-                        <i class="fas fa-download"></i> Export Laporan
-                    </button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-success" onclick="exportKpiExcel()">
+                            <i class="fas fa-file-excel"></i> Export Excel
+                        </button>
+                        <button class="btn btn-danger" onclick="exportKpiPDF()">
+                            <i class="fas fa-file-pdf"></i> Export PDF
+                        </button>
+                    </div>
                 </div>
                 <div class="kpi-chart" id="kpiChart">
                     </div>
@@ -2453,7 +2462,6 @@
         const STORAGE_LIMIT = 5 * 1024 * 1024;
 
         // ==================== TEXT FORMATTER ====================
-        // FIX: Memformat teks multiline HANYA pada bagian konten data, bukan strukturnya
         function escapeHtml(unsafe) {
             return (unsafe || '').toString()
                 .replace(/&/g, "&amp;")
@@ -2723,7 +2731,6 @@
             container.innerHTML = featured.map(p => createProgramCard(p)).join('');
         }
 
-        // FIX: Remove <br> tags from labels to restore original clean layout while retaining multi-line in formatText
         function createProgramCard(program) {
             return `
                 <div class="program-card" onclick="openViewModal(${program.id}, 'program')">
@@ -3225,45 +3232,143 @@
             showToast('Data KPI berhasil diperbarui!', 'info');
         }
 
-        function exportKpiReport() {
+        // ==================== EXPORT FUNCTIONS ====================
+        
+        async function exportKpiPDF() {
             if (!isAdmin) {
                 showToast('Anda harus login sebagai admin!', 'error');
                 return;
             }
 
-            const report = {
-                generatedAt: new Date().toISOString(),
-                settings: kpiSettings,
-                summary: {
-                    totalPrograms: programsData.length,
-                    completed: programsData.filter(p => p.kpi?.status === 'completed').length,
-                    inProgress: programsData.filter(p => p.kpi?.status === 'in-progress').length,
-                    notStarted: programsData.filter(p => p.kpi?.status === 'not-started' || !p.kpi).length,
-                    delayed: programsData.filter(p => p.kpi?.status === 'delayed').length,
-                    avgCompletion: calculateCompletionRate(),
-                    avgTimeliness: calculateTimelinessRate(),
-                    avgParticipants: calculateAvgParticipants(),
-                    avgQuality: calculateAvgQuality()
-                },
-                programs: programsData.map(p => ({
-                    title: p.title,
-                    category: p.category,
-                    status: p.kpi?.status,
-                    progress: p.kpi?.progress,
-                    participants: p.kpi?.participants,
-                    quality: p.kpi?.quality
-                }))
-            };
+            showToast('Sedang membuat PDF, mohon tunggu...', 'info');
+            
+            const kpiElement = document.getElementById('kpi');
+            
+            // Sembunyikan tombol-tombol sementara agar tidak ikut ter-print di PDF
+            const buttons = kpiElement.querySelectorAll('button');
+            const originalDisplays = [];
+            buttons.forEach((btn, index) => {
+                originalDisplays[index] = btn.style.display;
+                btn.style.display = 'none';
+            });
 
-            const blob = new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Laporan_KPI_GSM_2026_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
+            try {
+                // Render elemen HTML menjadi Canvas (mencakup grafik warna-warni)
+                const canvas = await html2canvas(kpiElement, {
+                    scale: 2,
+                    backgroundColor: '#F5F7FA', // Sesuaikan dengan warna background aplikasi
+                    logging: false
+                });
 
-            showToast('Laporan KPI berhasil diexport!', 'success');
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4');
+                
+                const imgData = canvas.toDataURL('image/png');
+                const pdfWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                // Tambahkan gambar pertama
+                doc.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                // Jika konten lebih panjang dari 1 halaman, buat halaman baru
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                doc.save(`Laporan_KPI_GSM_${new Date().toISOString().split('T')[0]}.pdf`);
+                showToast('Laporan PDF berhasil diunduh!', 'success');
+            } catch (error) {
+                console.error('PDF Error:', error);
+                showToast('Gagal membuat PDF!', 'error');
+            } finally {
+                // Kembalikan tampilan tombol
+                buttons.forEach((btn, index) => {
+                    btn.style.display = originalDisplays[index];
+                });
+            }
+        }
+
+        function exportKpiExcel() {
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            // 1. DATA RINGKASAN
+            const summaryData = [
+                ["LAPORAN KPI GURU SEKOLAH MINGGU 2026"],
+                ["Tanggal Export:", new Date().toLocaleString('id-ID')],
+                [],
+                ["KINERJA KESELURUHAN", "NILAI"],
+                ["Penyelesaian Program (%)", calculateCompletionRate() + "%"],
+                ["Ketepatan Waktu (%)", calculateTimelinessRate() + "%"],
+                ["Rata-rata Partisipasi (Orang)", calculateAvgParticipants()],
+                ["Rata-rata Kualitas (1-10)", calculateAvgQuality()],
+                [],
+                ["PROGRESS PER KATEGORI", "NILAI (%)"]
+            ];
+
+            const categories = ['A', 'B', 'C', 'D'];
+            const categoryNames = {'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik'};
+            
+            categories.forEach(cat => {
+                const catPrograms = programsData.filter(p => p.category === cat);
+                const avgProgress = catPrograms.length > 0 
+                    ? Math.round(catPrograms.reduce((sum, p) => sum + (p.kpi?.progress || 0), 0) / catPrograms.length)
+                    : 0;
+                summaryData.push([`Kategori ${cat} - ${categoryNames[cat]}`, avgProgress]);
+            });
+
+            const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+            
+            // Atur lebar kolom untuk Sheet Ringkasan
+            wsSummary['!cols'] = [{ wch: 30 }, { wch: 15 }];
+            XLSX.utils.book_append_sheet(wb, wsSummary, "Ringkasan KPI");
+
+            // 2. DATA DETAIL PER PROGRAM
+            const programData = programsData.map((p, index) => {
+                const statusText = {
+                    'not-started': 'Belum Dimulai',
+                    'in-progress': 'Sedang Berjalan',
+                    'completed': 'Selesai',
+                    'delayed': 'Terlambat'
+                }[p.kpi?.status || 'not-started'];
+
+                return {
+                    "No": index + 1,
+                    "Kategori": `Kategori ${p.category}`,
+                    "Nama Program": p.title,
+                    "Status": statusText,
+                    "Progress (%)": p.kpi?.progress || 0,
+                    "Target Selesai": p.date,
+                    "Realisasi Peserta": p.kpi?.participants || 0,
+                    "Skor Kualitas (1-10)": p.kpi?.quality || 0,
+                    "Catatan/Evaluasi": p.kpi?.notes || '-'
+                };
+            });
+
+            const wsPrograms = XLSX.utils.json_to_sheet(programData);
+            
+            // Atur lebar kolom untuk Sheet Detail
+            wsPrograms['!cols'] = [
+                { wch: 5 }, { wch: 12 }, { wch: 40 }, { wch: 15 }, 
+                { wch: 12 }, { wch: 25 }, { wch: 18 }, { wch: 18 }, { wch: 40 }
+            ];
+            
+            XLSX.utils.book_append_sheet(wb, wsPrograms, "Detail Program");
+
+            // Proses Download
+            XLSX.writeFile(wb, `Data_KPI_GSM_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showToast('Laporan Excel berhasil diunduh!', 'success');
         }
 
         // ==================== NOTULEN FUNCTIONS ====================
