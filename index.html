@@ -503,6 +503,7 @@
         .finance-table td {
             padding: 15px;
             border-bottom: 1px solid #E2E8F0;
+            vertical-align: top;
         }
 
         .finance-table tr:hover {
@@ -1879,7 +1880,7 @@
                         <label>Metode/Pelaksana</label>
                         <textarea id="editMethod"></textarea>
                     </div>
-                    
+
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
@@ -2200,7 +2201,6 @@
             appId: "1:6039178513:web:f064f5872e80ac0a4650b0"
         };
 
-        // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -2445,14 +2445,12 @@
         let selectedFile = null;
         let editSelectedFile = null;
 
-        // Admin Credentials
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'gsm2026';
 
-        // Storage Limit (5MB for LocalStorage Fallback tracking)
         const STORAGE_LIMIT = 5 * 1024 * 1024;
 
-        // ==================== TEXT FORMATTER (MULTILINE) ====================
+        // ==================== TEXT FORMATTER ====================
         function escapeHtml(unsafe) {
             return (unsafe || '').toString()
                 .replace(/&/g, "&amp;")
@@ -2471,12 +2469,9 @@
             setupAdminTrigger();
             checkAdminSession();
             
-            showToast('Menghubungkan ke database online...', 'info');
-            
-            // FIREBASE: Realtime Listener
+            // Listen to Firebase Realtime Database
             db.ref('gsm_data_2026').on('value', (snapshot) => {
                 const data = snapshot.val();
-                
                 if (data) {
                     programsData = data.programs || [];
                     financeData = data.finance || [];
@@ -2485,28 +2480,30 @@
                     kpiSettings = data.kpiSettings || {...defaultKpiSettings};
                 } else {
                     loadLocalData();
-                    saveData(); // Push default/local to Firebase
+                    saveData(); // Sync local to Firebase if empty
                 }
                 
-                // Force UI Update on data change
                 updateStats();
                 renderFeaturedPrograms();
+                
+                const activeFilterBtn = document.querySelector('.filter-btn.active');
+                let currentCat = 'all';
+                if (activeFilterBtn) {
+                    if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
+                    else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
+                    else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
+                    else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
+                }
+                renderAllPrograms(currentCat);
+                
                 renderFinanceTable();
                 renderMeetings();
                 renderNotulenList();
-                if(isAdmin) renderKpiDashboard();
-                
-                // Preserve Active Filter
-                const activeFilterBtn = document.querySelector('.filter-btn.active');
-                let currentCategory = 'all';
-                if (activeFilterBtn) {
-                    if (activeFilterBtn.textContent.includes('A.')) currentCategory = 'A';
-                    else if (activeFilterBtn.textContent.includes('B.')) currentCategory = 'B';
-                    else if (activeFilterBtn.textContent.includes('C.')) currentCategory = 'C';
-                    else if (activeFilterBtn.textContent.includes('D.')) currentCategory = 'D';
-                }
-                renderAllPrograms(currentCategory);
                 updateStorageWarning();
+                
+                if (document.getElementById('kpi').classList.contains('active') && isAdmin) {
+                    renderKpiDashboard();
+                }
             });
         }
 
@@ -2527,14 +2524,13 @@
 
         function saveData() {
             try {
-                // Local Backup
                 localStorage.setItem('gsm_programs_2026', JSON.stringify(programsData));
                 localStorage.setItem('gsm_finance_2026', JSON.stringify(financeData));
                 localStorage.setItem('gsm_meetings_2026', JSON.stringify(meetingsData));
                 localStorage.setItem('gsm_notulen_2026', JSON.stringify(notulenData));
                 localStorage.setItem('gsm_kpi_settings_2026', JSON.stringify(kpiSettings));
                 
-                // FIREBASE PUSH
+                // Push to Firebase Realtime Database
                 db.ref('gsm_data_2026').set({
                     programs: programsData,
                     finance: financeData,
@@ -2790,11 +2786,11 @@
                     <h4>${escapeHtml(program.title)}</h4>
                     <div class="program-info">
                         <i class="fas fa-calendar-alt"></i>
-                        <span><span class="label">Tanggal:</span> <br><span style="white-space: pre-wrap;">${formatText(program.date)}</span></span>
+                        <span><span class="label">Tanggal:</span> ${formatText(program.date)}</span>
                     </div>
                     <div class="program-info">
                         <i class="fas fa-map-marker-alt"></i>
-                        <span><span class="label">Lokasi:</span> ${escapeHtml(program.location)}</span>
+                        <span><span class="label">Lokasi:</span> ${formatText(program.location)}</span>
                     </div>
                     <div class="outcome">
                         <h5><i class="fas fa-bullseye"></i> Outcome</h5>
@@ -2821,21 +2817,20 @@
             });
 
             let html = '';
-            const mapCat = { 'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik', 'E': 'Keuangan', 'F': 'Rapat' };
-            Object.keys(categories).sort().forEach(cat => {
-                const programs = categories[cat];
+            for (const [cat, programs] of Object.entries(categories)) {
+                const catInfo = programs[0].catName;
                 html += `
                     <div class="category-section">
                         <div class="category-header">
                             <div class="cat-badge">${cat}</div>
-                            <h2>${mapCat[cat] || 'Lainnya'}</h2>
+                            <h2>${catInfo}</h2>
                         </div>
                         <div class="program-grid">
                             ${programs.map(p => createProgramCard(p)).join('')}
                         </div>
                     </div>
                 `;
-            });
+            }
             container.innerHTML = html;
             
             if (isAdmin) {
@@ -2854,9 +2849,9 @@
                     <td>${formatText(f.outcome)}</td>
                     <td>${formatText(f.impact)}</td>
                     <td>${formatText(f.execution)}</td>
-                    <td class="admin-only" style="display: ${isAdmin ? 'table-cell' : 'none'}; width:100px;">
-                        <button class="btn btn-primary" style="padding: 5px 10px; font-size: 0.8rem; width:100%; margin-bottom:5px;" onclick="openEditModal(${f.id}, 'finance')">Edit</button>
-                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem; width:100%;" onclick="deleteItem(${f.id}, 'finance')">Hapus</button>
+                    <td class="admin-only" style="display: ${isAdmin ? 'table-cell' : 'none'};">
+                        <button class="btn btn-primary" style="padding: 5px 10px; font-size: 0.8rem;" onclick="openEditModal(${f.id}, 'finance')">Edit</button>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem;" onclick="deleteItem(${f.id}, 'finance')">Hapus</button>
                     </td>
                 </tr>
             `).join('');
@@ -2877,15 +2872,15 @@
                         <h4>${escapeHtml(m.title)}</h4>
                         <div class="program-info">
                             <i class="fas fa-bullseye"></i>
-                            <span><span class="label">Outcome:</span> <br>${formatText(m.outcome)}</span>
+                            <span><span class="label">Outcome:</span> ${formatText(m.outcome)}</span>
                         </div>
                         <div class="program-info">
                             <i class="fas fa-heart"></i>
-                            <span><span class="label">Impact:</span> <br>${formatText(m.impact)}</span>
+                            <span><span class="label">Impact:</span> ${formatText(m.impact)}</span>
                         </div>
                         <div class="program-info">
                             <i class="fas fa-clock"></i>
-                            <span><span class="label">Jadwal:</span> <br>${formatText(m.execution)}</span>
+                            <span><span class="label">Jadwal:</span> ${formatText(m.execution)}</span>
                         </div>
                     </div>
                 `;
@@ -3209,7 +3204,7 @@
             renderKpiDashboard();
             closeKpiSettingsModal();
             showToast('Pengaturan KPI berhasil disimpan!', 'success');
-        }
+        });
 
         function openKpiProgramModal(id) {
             if (!isAdmin) {
@@ -3258,10 +3253,18 @@
             };
 
             saveData();
-            // the on('value') firebase listener will handle UI re-render, 
-            // but we can manually trigger to be fast
             renderKpiDashboard();
-            renderFeaturedPrograms();
+            
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            let currentCat = 'all';
+            if (activeFilterBtn) {
+                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
+                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
+                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
+                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
+            }
+            renderAllPrograms(currentCat);
+            
             closeKpiProgramModal();
             showToast('Progress KPI berhasil diperbarui!', 'success');
         });
@@ -3438,6 +3441,9 @@
                 notulenData.push(newNotulen);
                 
                 if (saveData()) {
+                    renderNotulenList();
+                    renderMeetings();
+                    updateStats();
                     closeUploadNotulenModal();
                     showToast('Notulen berhasil diupload!', 'success');
                 }
@@ -3513,6 +3519,9 @@
                 };
 
                 if (saveData()) {
+                    renderNotulenList();
+                    renderMeetings();
+                    updateStats();
                     closeEditNotulenModal();
                     showToast('Notulen berhasil diperbarui!', 'success');
                 }
@@ -3561,6 +3570,9 @@
             if (index !== -1) {
                 notulenData.splice(index, 1);
                 saveData();
+                renderNotulenList();
+                renderMeetings();
+                updateStats();
                 showToast('Notulen berhasil dihapus!', 'success');
             }
         }
@@ -3644,6 +3656,41 @@
             document.getElementById('editModal').style.display = 'none';
         }
 
+        function deleteItem(id, type) {
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            if (!confirm('Apakah Anda yakin ingin menghapus item ini?')) return;
+
+            const parsedId = Number(id);
+            if (type === 'program') {
+                programsData = programsData.filter(p => p.id !== parsedId);
+            } else if (type === 'finance') {
+                financeData = financeData.filter(f => f.id !== parsedId);
+            } else {
+                meetingsData = meetingsData.filter(m => m.id !== parsedId);
+            }
+
+            saveData();
+            
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            let currentCat = 'all';
+            if (activeFilterBtn) {
+                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
+                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
+                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
+                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
+            }
+            
+            renderAllPrograms(currentCat);
+            renderFinanceTable();
+            renderMeetings();
+            renderKpiDashboard();
+            showToast('Item berhasil dihapus!', 'success');
+        }
+
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -3722,27 +3769,6 @@
             closeEditModal();
         });
 
-        function deleteItem(id, type) {
-            if (!isAdmin) {
-                showToast('Anda harus login sebagai admin!', 'error');
-                return;
-            }
-
-            if (!confirm('Apakah Anda yakin ingin menghapus item ini?')) return;
-
-            const parsedId = Number(id);
-            if (type === 'program') {
-                programsData = programsData.filter(p => p.id !== parsedId);
-            } else if (type === 'finance') {
-                financeData = financeData.filter(f => f.id !== parsedId);
-            } else {
-                meetingsData = meetingsData.filter(m => m.id !== parsedId);
-            }
-
-            saveData();
-            showToast('Item berhasil dihapus!', 'success');
-        }
-
         // ==================== LOGIN FUNCTIONS ====================
         function openLoginModal() {
             document.getElementById('loginModal').style.display = 'flex';
@@ -3751,6 +3777,21 @@
         function closeLoginModal() {
             document.getElementById('loginModal').style.display = 'none';
         }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                showAdminMode();
+                closeLoginModal();
+                document.getElementById('loginForm').reset();
+            } else {
+                showToast('Username atau password salah!', 'error');
+            }
+        });
 
         // ==================== UTILITY FUNCTIONS ====================
         function formatDate(dateString) {
