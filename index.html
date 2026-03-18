@@ -641,14 +641,14 @@ saveToFirebase('meetings', defaultMeetings);
 }
 });
 
-// Notulen
-db.collection('gsm_data').doc('notulen').onSnapshot((doc) => {
+// Notulen - METADATA ONLY (file stored in localStorage)
+db.collection('gsm_data').doc('notulen_metadata').onSnapshot((doc) => {
 if (doc.exists) {
 notulenData = doc.data().data || [];
 renderNotulenList();
 updateStats();
 } else {
-saveToFirebase('notulen', []);
+saveToFirebase('notulen_metadata', []);
 }
 });
 
@@ -680,14 +680,23 @@ showToast('Gagal terhubung ke Firebase.', 'error');
 }
 }
 
-// Save data to Firebase
+// Save data to Firebase (WITHOUT fileData for notulen)
 async function saveToFirebase(collection, data, collectionPath = 'gsm_data') {
 try {
 isSyncing = true;
 showSyncStatus('Menyimpan...', true);
 
+// For notulen, remove fileData before saving to Firebase
+let dataToSave = data;
+if (collection === 'notulen_metadata' || collection === 'notulen') {
+dataToSave = data.map(item => {
+const { fileData, ...metadata } = item;
+return metadata;
+});
+}
+
 await db.collection(collectionPath).doc(collection).set({
-data: data,
+data: dataToSave,
 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
 updatedBy: currentUser ? currentUser.username : 'anonymous'
 }, { merge: true });
@@ -717,7 +726,7 @@ function saveData() {
 saveToFirebase('programs', programsData);
 saveToFirebase('finance', financeData);
 saveToFirebase('meetings', meetingsData);
-saveToFirebase('notulen', notulenData);
+saveToFirebase('notulen_metadata', notulenData);
 updateStats();
 return true;
 }
@@ -727,7 +736,7 @@ if (confirm('Reset semua data ke default? Data di semua device akan terreset!'))
 saveToFirebase('programs', defaultPrograms);
 saveToFirebase('finance', defaultFinance);
 saveToFirebase('meetings', defaultMeetings);
-saveToFirebase('notulen', []);
+saveToFirebase('notulen_metadata', []);
 showToast('Data direset!', 'success');
 }
 }
@@ -1078,7 +1087,7 @@ function refreshKpiData() { renderKpiDashboard(); showToast('KPI di-refresh!', '
 
 function exportKpiReport() { if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; } const report = { generatedAt: new Date().toISOString(), settings: kpiSettings, summary: { totalPrograms: programsData.length, completed: programsData.filter(p => p.kpi?.status === 'completed').length, inProgress: programsData.filter(p => p.kpi?.status === 'in-progress').length, notStarted: programsData.filter(p => p.kpi?.status === 'not-started' || !p.kpi).length, delayed: programsData.filter(p => p.kpi?.status === 'delayed').length } }; const blob = new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `Laporan_KPI_${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url); showToast('Laporan diexport!', 'success'); }
 
-// ==================== NOTULEN FUNCTIONS ====================
+// ==================== NOTULEN FUNCTIONS (FIXED - HYBRID STORAGE) ====================
 function openUploadNotulenModal(meetingId = null) { if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; } document.getElementById('uploadNotulenForm').reset(); document.getElementById('notulenId').value = ''; document.getElementById('selectedFileName').textContent = ''; selectedFile = null; const meetingSelect = document.getElementById('notulenMeetingId'); meetingSelect.innerHTML = '<option value="">-- Pilih Rapat Terkait --</option>'; meetingsData.forEach(m => { const option = document.createElement('option'); option.value = m.id; option.textContent = m.title; if (meetingId && m.id == meetingId) { option.selected = true; } meetingSelect.appendChild(option); }); document.getElementById('uploadNotulenModal').style.display = 'flex'; }
 function closeUploadNotulenModal() { document.getElementById('uploadNotulenModal').style.display = 'none'; }
 
@@ -1087,15 +1096,51 @@ function handleEditFileSelect(event) { const file = event.target.files[0]; if (f
 
 function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); }); }
 
+// Upload Notulen - FIXED: Store metadata in Firebase, file in localStorage
 document.getElementById('uploadNotulenForm').addEventListener('submit', async function(e) {
 e.preventDefault(); if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; } if (!selectedFile) { showToast('Upload file!', 'error'); return; }
 try {
 const base64File = await fileToBase64(selectedFile);
-const newNotulen = { id: Date.now(), title: document.getElementById('notulenTitle').value, date: document.getElementById('notulenDate').value, meetingId: document.getElementById('notulenMeetingId').value, description: document.getElementById('notulenDescription').value, fileName: selectedFile.name, fileType: selectedFile.type, fileSize: selectedFile.size, fileData: base64File, status: document.getElementById('notulenStatus').value, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
-notulenData.push(newNotulen);
-await saveToFirebase('notulen', notulenData);
-renderNotulenList(); renderMeetings(); updateStats(); closeUploadNotulenModal(); showToast('Notulen diupload!', 'success');
-} catch (error) { console.error('Upload error:', error); showToast('Gagal upload!', 'error'); }
+const notulenId = Date.now();
+
+// Create metadata object (for Firebase sync) - WITHOUT fileData
+const notulenMetadata = {
+id: notulenId,
+title: document.getElementById('notulenTitle').value,
+date: document.getElementById('notulenDate').value,
+meetingId: document.getElementById('notulenMeetingId').value,
+description: document.getElementById('notulenDescription').value,
+fileName: selectedFile.name,
+fileType: selectedFile.type,
+fileSize: selectedFile.size,
+status: document.getElementById('notulenStatus').value,
+createdAt: new Date().toISOString(),
+updatedAt: new Date().toISOString()
+};
+
+// Store file data in localStorage (due to Firebase 1MB limit)
+const localStorageKey = `notulen_file_${notulenId}`;
+localStorage.setItem(localStorageKey, base64File);
+notulenMetadata.localStorageKey = localStorageKey; // Reference to localStorage
+
+// Add to local array
+notulenData.push(notulenMetadata);
+
+// Save metadata to Firebase (for sync across devices) - WITHOUT fileData
+await saveToFirebase('notulen_metadata', notulenData);
+
+// Also save full data to localStorage as backup
+localStorage.setItem('gsm_notulen_2026', JSON.stringify(notulenData));
+
+renderNotulenList();
+renderMeetings();
+updateStats();
+closeUploadNotulenModal();
+showToast('Notulen berhasil diupload!', 'success');
+} catch (error) {
+console.error('Upload error:', error);
+showToast('Gagal upload: ' + error.message, 'error');
+}
 });
 
 function openEditNotulenModal(id) { if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; } const notulen = notulenData.find(n => n.id === id); if (!notulen) return; document.getElementById('editNotulenId').value = notulen.id; document.getElementById('editNotulenTitle').value = notulen.title; document.getElementById('editNotulenDate').value = notulen.date; document.getElementById('editNotulenDescription').value = notulen.description || ''; document.getElementById('currentFileName').textContent = `📄 ${notulen.fileName || 'notulen.pdf'} (${(notulen.fileSize / 1024).toFixed(1)} KB)`; document.getElementById('editNotulenStatus').value = notulen.status; document.getElementById('editSelectedFileName').textContent = ''; editSelectedFile = null; document.getElementById('editNotulenModal').style.display = 'flex'; }
@@ -1106,16 +1151,94 @@ e.preventDefault(); if (currentRole === 'viewer') { showToast('Akses ditolak!', 
 const id = parseInt(document.getElementById('editNotulenId').value), index = notulenData.findIndex(n => n.id === id);
 if (index === -1) return;
 try {
-let fileData = notulenData[index].fileData, fileName = notulenData[index].fileName, fileType = notulenData[index].fileType, fileSize = notulenData[index].fileSize;
-if (editSelectedFile) { fileData = await fileToBase64(editSelectedFile); fileName = editSelectedFile.name; fileType = editSelectedFile.type; fileSize = editSelectedFile.size; }
-notulenData[index] = { ...notulenData[index], title: document.getElementById('editNotulenTitle').value, date: document.getElementById('editNotulenDate').value, description: document.getElementById('editNotulenDescription').value, fileName, fileType, fileSize, fileData, status: document.getElementById('editNotulenStatus').value, updatedAt: new Date().toISOString() };
-await saveToFirebase('notulen', notulenData);
-renderNotulenList(); renderMeetings(); updateStats(); closeEditNotulenModal(); showToast('Notulen diupdate!', 'success');
-} catch (error) { console.error('Edit error:', error); showToast('Gagal update!', 'error'); }
+let fileName = notulenData[index].fileName;
+let fileType = notulenData[index].fileType;
+let fileSize = notulenData[index].fileSize;
+let localStorageKey = notulenData[index].localStorageKey;
+
+// If new file uploaded
+if (editSelectedFile) {
+const fileData = await fileToBase64(editSelectedFile);
+fileName = editSelectedFile.name;
+fileType = editSelectedFile.type;
+fileSize = editSelectedFile.size;
+
+// Store new file in localStorage
+localStorage.setItem(localStorageKey, fileData);
+}
+
+notulenData[index] = {
+...notulenData[index],
+title: document.getElementById('editNotulenTitle').value,
+date: document.getElementById('editNotulenDate').value,
+description: document.getElementById('editNotulenDescription').value,
+fileName: fileName,
+fileType: fileType,
+fileSize: fileSize,
+localStorageKey: localStorageKey,
+status: document.getElementById('editNotulenStatus').value,
+updatedAt: new Date().toISOString()
+};
+
+await saveToFirebase('notulen_metadata', notulenData);
+localStorage.setItem('gsm_notulen_2026', JSON.stringify(notulenData));
+
+renderNotulenList();
+renderMeetings();
+updateStats();
+closeEditNotulenModal();
+showToast('Notulen diupdate!', 'success');
+} catch (error) {
+console.error('Edit error:', error);
+showToast('Gagal update!', 'error');
+}
 });
 
-function downloadNotulen(id) { const notulen = notulenData.find(n => n.id === id); if (!notulen) return; if (notulen.status !== 'published' && currentRole === 'viewer') { showToast('Belum tersedia!', 'error'); return; } try { const link = document.createElement('a'); link.href = notulen.fileData; link.download = notulen.fileName || 'notulen.pdf'; link.click(); showToast('Download dimulai!', 'info'); } catch (error) { showToast('Gagal download!', 'error'); } }
-function deleteNotulen(id) { if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; } if (!confirm('Hapus notulen?')) return; const index = notulenData.findIndex(n => n.id === id); if (index !== -1) { notulenData.splice(index, 1); saveToFirebase('notulen', notulenData); renderNotulenList(); renderMeetings(); updateStats(); showToast('Notulen dihapus!', 'success'); } }
+// Download Notulen - FIXED: Retrieve from localStorage
+function downloadNotulen(id) {
+const notulen = notulenData.find(n => n.id === id);
+if (!notulen) return;
+if (notulen.status !== 'published' && currentRole === 'viewer') {
+showToast('Belum tersedia!', 'error');
+return;
+}
+try {
+// Get file from localStorage
+const fileData = localStorage.getItem(notulen.localStorageKey);
+if (!fileData) {
+showToast('File tidak ditemukan di device ini', 'error');
+return;
+}
+const link = document.createElement('a');
+link.href = fileData;
+link.download = notulen.fileName || 'notulen.pdf';
+link.click();
+showToast('Download dimulai!', 'info');
+} catch (error) {
+console.error('Download error:', error);
+showToast('Gagal download!', 'error');
+}
+}
+
+// Delete Notulen - FIXED: Clean up localStorage
+function deleteNotulen(id) {
+if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
+if (!confirm('Hapus notulen?')) return;
+const index = notulenData.findIndex(n => n.id === id);
+if (index !== -1) {
+// Clean up localStorage
+if (notulenData[index].localStorageKey) {
+localStorage.removeItem(notulenData[index].localStorageKey);
+}
+notulenData.splice(index, 1);
+saveToFirebase('notulen_metadata', notulenData);
+localStorage.setItem('gsm_notulen_2026', JSON.stringify(notulenData));
+renderNotulenList();
+renderMeetings();
+updateStats();
+showToast('Notulen dihapus!', 'success');
+}
+}
 
 // ==================== MODAL FUNCTIONS ====================
 function openViewModal(id, type) { let item; if (type === 'program') { item = programsData.find(p => p.id === id); } else if (type === 'finance') { item = financeData.find(f => f.id === id); } else { item = meetingsData.find(m => m.id === id); } if (!item) return; document.getElementById('viewModalTitle').textContent = item.title; document.getElementById('viewModalDate').textContent = item.date || item.execution || '-'; document.getElementById('viewModalLocation').textContent = item.location || '-'; document.getElementById('viewModalOutcome').textContent = item.outcome; document.getElementById('viewModalImpact').textContent = item.impact; document.getElementById('viewModalMethod').textContent = item.method || item.execution || '-'; document.getElementById('viewModal').style.display = 'flex'; }
