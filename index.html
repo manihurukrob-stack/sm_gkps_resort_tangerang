@@ -66,7 +66,7 @@
         .admin-badge.show {
             display: flex;
         }
-
+        
         .admin-badge.editor { background: var(--info); color: var(--white); }
         .admin-badge.viewer { background: var(--text-light); color: var(--white); }
 
@@ -78,6 +78,9 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .header::before {
@@ -91,20 +94,45 @@
             border-radius: 50%;
         }
 
-        .header-logo {
-            font-size: 3rem;
+        /* Tata Letak Logo Baru (Kiri - Tengah - Kanan) */
+        .header-top-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px; /* Jarak antara logo dan teks */
+            width: 100%;
+            position: relative;
+            z-index: 2;
             margin-bottom: 10px;
-            color: var(--accent);
+        }
+
+        .header-text {
+            text-align: center;
+        }
+
+        .logo-gkps, .logo-tema {
+            height: 110px; /* Ukuran proporsional logo */
+            width: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            background-color: var(--white);
+            padding: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-gkps:hover, .logo-tema:hover {
+            transform: scale(1.05);
         }
 
         .header h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 2rem;
+            font-size: 2.2rem;
             margin-bottom: 5px;
+            color: var(--white);
         }
 
         .header p {
-            font-size: 0.9rem;
+            font-size: 1rem;
             opacity: 0.9;
         }
 
@@ -114,6 +142,8 @@
             padding: 15px;
             margin-top: 20px;
             backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 2;
         }
 
         .theme-box h3 {
@@ -180,7 +210,7 @@
             color: var(--white);
         }
 
-        /* Access Control Classes */
+        /* Admin Only Nav Button */
         .admin-only, .super-admin-only {
             display: none;
         }
@@ -195,11 +225,6 @@
             gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
-            background: var(--white);
-            padding: 15px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border-left: 4px solid var(--primary);
         }
 
         .admin-actions.show {
@@ -210,7 +235,7 @@
             background: var(--primary);
             color: var(--white);
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: var(--radius);
             cursor: pointer;
             font-weight: 500;
@@ -218,7 +243,6 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
         }
 
         .admin-btn:hover {
@@ -228,7 +252,6 @@
 
         .admin-btn.logout {
             background: var(--danger);
-            margin-left: auto; /* Push logout to the right */
         }
 
         .admin-btn.logout:hover {
@@ -242,22 +265,20 @@
             padding: 30px 20px;
         }
 
-        /* ================= VIEW TOGGLE SYSTEM ================= */
-        /* Kode ini yang mengunci agar tab tidak bocor ke tab lain */
+        /* View Toggle - Diperbarui agar tidak bocor */
         .view-section {
-            display: none !important; /* Paksa sembunyi */
+            display: none !important; 
             animation: fadeIn 0.4s ease;
         }
 
         .view-section.active {
-            display: block !important; /* Paksa tampil hanya jika active */
+            display: block !important;
         }
-
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* ======================================================= */
 
         /* Stats Cards */
         .stats-grid {
@@ -390,7 +411,6 @@
             font-size: 1.1rem;
             margin-bottom: 15px;
             font-weight: 600;
-            padding-right: 40px;
         }
 
         .program-info {
@@ -418,29 +438,45 @@
             min-width: 80px;
         }
 
-        .program-card .outcome, .program-card .impact {
+        .program-card .outcome {
             background: rgba(0, 51, 102, 0.05);
             padding: 12px;
             border-radius: 8px;
             margin-top: 15px;
         }
-        
-        .program-card .impact { background: rgba(212, 175, 55, 0.1); margin-top: 10px; }
 
-        .program-card .outcome h5, .program-card .impact h5 {
+        .program-card .outcome h5 {
             color: var(--primary);
             font-size: 0.85rem;
             margin-bottom: 5px;
             text-transform: uppercase;
         }
-        .program-card .impact h5 { color: var(--accent); }
 
-        .program-card .outcome p, .program-card .impact p {
+        .program-card .outcome p {
             font-size: 0.85rem;
             color: var(--text-light);
             line-height: 1.5;
         }
-        .program-card .impact p { color: var(--text); }
+
+        .program-card .impact {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .program-card .impact h5 {
+            color: var(--accent);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .program-card .impact p {
+            font-size: 0.85rem;
+            color: var(--text);
+            line-height: 1.5;
+        }
 
         /* Admin Card Actions */
         .card-actions {
@@ -467,29 +503,52 @@
             transition: all 0.3s ease;
         }
 
-        .card-action-btn.edit { background: var(--warning); color: var(--white); }
-        .card-action-btn.delete { background: var(--danger); color: var(--white); }
-        .card-action-btn.upload { background: var(--info); color: var(--white); }
-        .card-action-btn.kpi { background: var(--purple); color: var(--white); display: none; }
-        .card-action-btn.kpi.show { display: flex; }
-        .card-action-btn:hover { transform: scale(1.1); }
+        .card-action-btn.edit {
+            background: var(--warning);
+            color: var(--white);
+        }
 
-        /* Finance & Users Table */
-        .data-table-container {
+        .card-action-btn.delete {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .card-action-btn.upload {
+            background: var(--info);
+            color: var(--white);
+        }
+
+        .card-action-btn.kpi {
+            background: var(--purple);
+            color: var(--white);
+            display: none;
+        }
+
+        .card-action-btn.kpi.show {
+            display: flex;
+        }
+
+        .card-action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Finance Table */
+        .finance-table {
             width: 100%;
             background: var(--white);
             border-radius: var(--radius);
-            overflow-x: auto;
+            overflow: hidden;
             box-shadow: var(--shadow);
+            overflow-x: auto;
         }
 
-        .data-table-container table {
+        .finance-table table {
             width: 100%;
-            min-width: 800px;
+            min-width: 800px; /* Ditambahkan agar tabel tidak hancur di HP */
             border-collapse: collapse;
         }
 
-        .data-table-container th {
+        .finance-table th {
             background: var(--primary);
             color: var(--white);
             padding: 15px;
@@ -497,14 +556,19 @@
             font-weight: 600;
         }
 
-        .data-table-container td {
+        .finance-table td {
             padding: 15px;
             border-bottom: 1px solid #E2E8F0;
             vertical-align: top;
         }
 
-        .data-table-container tr:hover { background: var(--bg); }
-        .data-table-container tr:last-child td { border-bottom: none; }
+        .finance-table tr:hover {
+            background: var(--bg);
+        }
+
+        .finance-table tr:last-child td {
+            border-bottom: none;
+        }
 
         /* Modal */
         .modal {
@@ -533,8 +597,14 @@
         }
 
         @keyframes modalSlide {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
@@ -563,192 +633,1066 @@
             line-height: 1;
         }
 
-        .modal-body { padding: 25px; }
-        .modal-row { margin-bottom: 20px; }
-        .modal-row h4 {
-            color: var(--primary); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+        .modal-body {
+            padding: 25px;
         }
-        .modal-row h4 i { color: var(--accent); }
-        .modal-row p { color: var(--text); line-height: 1.6; background: var(--bg); padding: 15px; border-radius: 8px; }
+
+        .modal-row {
+            margin-bottom: 20px;
+        }
+
+        .modal-row h4 {
+            color: var(--primary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-row h4 i {
+            color: var(--accent);
+        }
+
+        .modal-row p {
+            color: var(--text);
+            line-height: 1.6;
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 8px;
+        }
 
         /* Form Styles */
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--primary); }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: var(--radius); font-family: 'Poppins', sans-serif; font-size: 0.95rem; transition: all 0.3s ease;
+        .form-group {
+            margin-bottom: 20px;
         }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
-        }
-        .form-group textarea { min-height: 100px; resize: vertical; }
-        .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 25px; }
 
-        .btn { padding: 12px 24px; border-radius: var(--radius); border: none; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
-        .btn-primary { background: var(--primary); color: var(--white); }
-        .btn-primary:hover { background: var(--primary-light); }
-        .btn-secondary { background: var(--text-light); color: var(--white); }
-        .btn-secondary:hover { background: var(--text); }
-        .btn-danger { background: var(--danger); color: var(--white); }
-        .btn-danger:hover { background: #C53030; }
-        .btn-success { background: var(--success); color: var(--white); }
-        .btn-success:hover { background: #38A169; }
-        .btn-info { background: var(--info); color: var(--white); }
-        .btn-info:hover { background: #3182CE; }
-        .btn-warning { background: var(--warning); color: var(--white); }
-        .btn-warning:hover { background: #DD6B20; }
-        .btn-purple { background: var(--purple); color: var(--white); }
-        .btn-purple:hover { background: #805AD5; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #E2E8F0;
+            border-radius: var(--radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+        }
+
+        .btn-secondary {
+            background: var(--text-light);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: var(--text);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background: #C53030;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background: #38A169;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: var(--white);
+        }
+
+        .btn-info:hover {
+            background: #3182CE;
+        }
+
+        .btn-purple {
+            background: var(--purple);
+            color: var(--white);
+        }
+
+        .btn-purple:hover {
+            background: #805AD5;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .btn-warning:hover {
+            background: #DD6B20;
+        }
 
         /* Login Modal */
         .login-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
         }
+
         .login-box {
-            background: var(--white); padding: 40px; border-radius: var(--radius); width: 100%; max-width: 400px; text-align: center;
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
         }
-        .login-box h2 { font-family: 'Playfair Display', serif; color: var(--primary); margin-bottom: 25px; }
-        .login-box .logo { font-size: 3rem; color: var(--accent); margin-bottom: 15px; }
+
+        .login-box h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
+
+        .login-box .logo {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
 
         /* Footer */
-        .footer { background: var(--primary); color: var(--white); text-align: center; padding: 30px 20px; margin-top: 50px; position: relative; }
-        .footer p { opacity: 0.8; font-size: 0.9rem; margin-bottom: 10px; }
-        .footer-signature { display: flex; justify-content: center; gap: 60px; margin-top: 20px; flex-wrap: wrap; }
-        .signature-box { text-align: center; cursor: pointer; transition: all 0.3s ease; }
-        .signature-box:hover { transform: scale(1.05); }
-        .signature-box p { margin-bottom: 5px; }
-        .signature-box .name { font-weight: 600; color: var(--accent); }
-
-        .admin-login-trigger {
-            position: absolute; bottom: 10px; right: 20px; color: rgba(255,255,255,0.3); cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease; padding: 5px 10px; border-radius: 5px;
+        .footer {
+            background: var(--primary);
+            color: var(--white);
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+            position: relative;
         }
-        .admin-login-trigger:hover { color: var(--accent); background: rgba(255,255,255,0.1); }
+
+        .footer p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .footer-signature {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .signature-box {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .signature-box:hover {
+            transform: scale(1.05);
+        }
+
+        .signature-box p {
+            margin-bottom: 5px;
+        }
+
+        .signature-box .name {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Admin Login Trigger (Visible but subtle) */
+        .admin-login-trigger {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            color: rgba(255,255,255,0.3);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .admin-login-trigger:hover {
+            color: var(--accent);
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Hidden Admin Trigger (Backup) */
+        .admin-trigger {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 9999;
+        }
 
         /* Filter Buttons */
-        .filter-container { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
-        .filter-btn {
-            background: var(--white); border: 2px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
-        .filter-btn:hover, .filter-btn.active { background: var(--primary); color: var(--white); }
+
+        .filter-btn {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary);
+            color: var(--white);
+        }
 
         /* Toast Notification */
         .toast {
-            position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: var(--white); padding: 15px 25px; border-radius: var(--radius); box-shadow: var(--shadow); display: none; z-index: 3000; animation: slideIn 0.3s ease;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: var(--white);
+            padding: 15px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: none;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
         }
-        .toast.show { display: block; }
-        .toast.success { background: var(--success); }
-        .toast.error { background: var(--danger); }
-        .toast.info { background: var(--info); }
-        .toast.purple { background: var(--purple); }
 
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast.show {
+            display: block;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .toast.info {
+            background: var(--info);
+        }
+
+        .toast.purple {
+            background: var(--purple);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
 
         /* Data Reset Button */
         .data-reset {
-            position: fixed; bottom: 20px; left: 20px; background: var(--warning); color: var(--white); padding: 10px 15px; border-radius: var(--radius); font-size: 0.8rem; cursor: pointer; display: none; z-index: 999;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--warning);
+            color: var(--white);
+            padding: 10px 15px;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: none;
+            z-index: 999;
         }
-        .data-reset.show { display: block; }
+
+        .data-reset.show {
+            display: block;
+        }
 
         /* Notulen Section Styles */
-        .notulen-section { background: var(--white); border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); margin-bottom: 30px; }
-        .notulen-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--bg); }
-        .notulen-header h3 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 1.4rem; }
-        .notulen-list { display: grid; gap: 15px; }
-        .notulen-item { background: var(--bg); border-radius: var(--radius); padding: 20px; border-left: 4px solid var(--accent); display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; }
-        .notulen-item:hover { box-shadow: 0 5px 15px rgba(0, 51, 102, 0.1); }
-        .notulen-info { flex: 1; }
-        .notulen-info h4 { color: var(--primary); font-size: 1rem; margin-bottom: 8px; }
-        .notulen-info p { font-size: 0.85rem; color: var(--text-light); margin-bottom: 5px; }
-        .notulen-info .date { font-size: 0.8rem; color: var(--text-light); }
-        .notulen-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
-        .notulen-btn { padding: 8px 16px; border-radius: var(--radius); border: none; cursor: pointer; font-weight: 500; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
-        .notulen-btn.download { background: var(--success); color: var(--white); }
-        .notulen-btn.download:hover { background: #38A169; }
-        .notulen-btn.edit, .notulen-btn.delete { display: none; }
-        .notulen-btn.edit.show, .notulen-btn.delete.show { display: flex; }
-        .notulen-status { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 10px; }
-        .notulen-status.draft { background: var(--warning); color: var(--white); }
-        .notulen-status.published { background: var(--success); color: var(--white); }
-        .notulen-status.review { background: var(--info); color: var(--white); }
-        .file-info { font-size: 0.8rem; color: var(--text-light); margin-top: 5px; }
-        .file-info i { margin-right: 5px; }
+        .notulen-section {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .notulen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--bg);
+        }
+
+        .notulen-header h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+
+        .notulen-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .notulen-item {
+            background: var(--bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            border-left: 4px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .notulen-item:hover {
+            box-shadow: 0 5px 15px rgba(0, 51, 102, 0.1);
+        }
+
+        .notulen-info {
+            flex: 1;
+        }
+
+        .notulen-info h4 {
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .notulen-info p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .notulen-info .date {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .notulen-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap; /* Tambahan agar rapi di HP */
+        }
+
+        .notulen-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .notulen-btn.download {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .notulen-btn.download:hover {
+            background: #38A169;
+        }
+
+        .notulen-btn.edit {
+            background: var(--warning);
+            color: var(--white);
+            display: none;
+        }
+
+        .notulen-btn.edit.show {
+            display: flex;
+        }
+
+        .notulen-btn.delete {
+            background: var(--danger);
+            color: var(--white);
+            display: none;
+        }
+
+        .notulen-btn.delete.show {
+            display: flex;
+        }
+
+        .notulen-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .notulen-status.draft {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .notulen-status.published {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .notulen-status.review {
+            background: var(--info);
+            color: var(--white);
+        }
+
+        .file-info {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .file-info i {
+            margin-right: 5px;
+        }
 
         /* Upload Area */
-        .upload-area { border: 2px dashed var(--primary); border-radius: var(--radius); padding: 40px; text-align: center; background: var(--bg); margin-bottom: 20px; cursor: pointer; transition: all 0.3s ease; }
-        .upload-area:hover { border-color: var(--accent); background: rgba(212, 175, 55, 0.05); }
-        .upload-area i { font-size: 3rem; color: var(--primary); margin-bottom: 15px; }
-        .upload-area h4 { color: var(--primary); margin-bottom: 10px; }
-        .upload-area p { color: var(--text-light); font-size: 0.85rem; }
-        .upload-area input { display: none; }
-        .meeting-with-notulen { position: relative; }
-        .notulen-indicator { position: absolute; top: 15px; left: 15px; background: var(--success); color: var(--white); padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; z-index: 10;}
+        .upload-area {
+            border: 2px dashed var(--primary);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            background: var(--bg);
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-        /* KPI STYLES */
-        .kpi-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px; }
-        .kpi-card { background: var(--white); border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); border-top: 4px solid var(--purple); transition: all 0.3s ease; }
-        .kpi-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(159, 122, 234, 0.2); }
-        .kpi-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .kpi-card-header h3 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 1.2rem; }
-        .kpi-card-header .kpi-icon { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), #805AD5); display: flex; align-items: center; justify-content: center; color: var(--white); font-size: 1.5rem; }
-        .kpi-value { font-size: 2.5rem; font-weight: 700; color: var(--purple); margin-bottom: 5px; }
-        .kpi-label { color: var(--text-light); font-size: 0.9rem; margin-bottom: 15px; }
-        .kpi-progress { width: 100%; height: 10px; background: #E2E8F0; border-radius: 5px; overflow: hidden; margin-bottom: 10px; }
-        .kpi-progress-bar { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
-        .kpi-progress-bar.low { background: linear-gradient(90deg, var(--danger), #F56565); }
-        .kpi-progress-bar.medium { background: linear-gradient(90deg, var(--warning), #ED8936); }
-        .kpi-progress-bar.high { background: linear-gradient(90deg, var(--success), #48BB78); }
-        .kpi-target { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-light); }
-        .kpi-program-list { background: var(--white); border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); }
-        .kpi-program-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #E2E8F0; transition: all 0.3s ease; flex-wrap: wrap; gap: 10px;}
-        .kpi-program-item:hover { background: var(--bg); }
-        .kpi-program-item:last-child { border-bottom: none; }
-        .kpi-program-info { flex: 1; min-width: 250px;}
-        .kpi-program-info h4 { color: var(--primary); font-size: 1rem; margin-bottom: 5px; }
-        .kpi-program-info p { font-size: 0.85rem; color: var(--text-light); }
-        .kpi-program-status { display: flex; align-items: center; gap: 15px; flex-wrap: wrap;}
-        .kpi-status-badge { padding: 5px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
-        .kpi-status-badge.not-started { background: #E2E8F0; color: var(--text-light); }
-        .kpi-status-badge.in-progress { background: rgba(66, 153, 225, 0.1); color: var(--info); }
-        .kpi-status-badge.completed { background: rgba(72, 187, 120, 0.1); color: var(--success); }
-        .kpi-status-badge.delayed { background: rgba(245, 101, 101, 0.1); color: var(--danger); }
-        .kpi-program-progress { width: 150px; }
-        .kpi-program-progress .kpi-progress { height: 8px; margin-bottom: 5px; }
-        .kpi-program-progress span { font-size: 0.8rem; color: var(--text-light); }
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: rgba(212, 175, 55, 0.05);
+        }
 
-        .kpi-chart-container { background: var(--white); border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); margin-bottom: 30px; overflow-x: auto;}
-        .kpi-chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
-        .kpi-chart-header h3 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 1.3rem; }
-        .kpi-chart { height: 300px; min-width: 500px; display: flex; align-items: flex-end; justify-content: space-around; padding: 20px 0; border-bottom: 2px solid #E2E8F0; border-left: 2px solid #E2E8F0; }
-        .kpi-bar { width: 60px; background: linear-gradient(180deg, var(--purple), #805AD5); border-radius: 8px 8px 0 0; position: relative; transition: all 0.5s ease; cursor: pointer; }
-        .kpi-bar:hover { opacity: 0.8; }
-        .kpi-bar-label { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; color: var(--text-light); white-space: nowrap; }
-        .kpi-bar-value { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.85rem; font-weight: 600; color: var(--purple); }
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
 
-        .kpi-report-section { background: var(--white); border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); margin-top: 30px; }
-        .kpi-report-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--bg); }
-        .kpi-report-header h3 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 1.3rem; }
-        .kpi-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
-        .kpi-summary-item { background: var(--bg); padding: 20px; border-radius: var(--radius); text-align: center; }
-        .kpi-summary-item i { font-size: 2rem; color: var(--purple); margin-bottom: 10px; }
-        .kpi-summary-item h4 { font-size: 2rem; color: var(--primary); margin-bottom: 5px; }
-        .kpi-summary-item p { font-size: 0.85rem; color: var(--text-light); }
-        
+        .upload-area h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .upload-area p {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        /* Meeting List with Notulen Status */
+        .meeting-with-notulen {
+            position: relative;
+        }
+
+        .notulen-indicator {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--success);
+            color: var(--white);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .notulen-indicator.pending {
+            background: var(--warning);
+        }
+
+        /* Storage Warning */
+        .storage-warning {
+            background: rgba(237, 137, 54, 0.1);
+            border: 1px solid var(--warning);
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .storage-warning.show {
+            display: block;
+        }
+
+        .storage-warning i {
+            color: var(--warning);
+            margin-right: 10px;
+        }
+
+        .storage-warning p {
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+
+        .storage-progress {
+            width: 100%;
+            height: 8px;
+            background: #E2E8F0;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .storage-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--warning), var(--danger));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .storage-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        /* ==================== KPI STYLES ==================== */
+        .kpi-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--purple);
+            transition: all 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(159, 122, 234, 0.2);
+        }
+
+        .kpi-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card-header h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .kpi-card-header .kpi-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple), #805AD5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.5rem;
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--purple);
+            margin-bottom: 5px;
+        }
+
+        .kpi-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .kpi-progress {
+            width: 100%;
+            height: 10px;
+            background: #E2E8F0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .kpi-progress-bar {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .kpi-progress-bar.low {
+            background: linear-gradient(90deg, var(--danger), #F56565);
+        }
+
+        .kpi-progress-bar.medium {
+            background: linear-gradient(90deg, var(--warning), #ED8936);
+        }
+
+        .kpi-progress-bar.high {
+            background: linear-gradient(90deg, var(--success), #48BB78);
+        }
+
+        .kpi-target {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .kpi-settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .kpi-setting-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--purple);
+        }
+
+        .kpi-setting-card h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .kpi-setting-card h4 i {
+            color: var(--purple);
+        }
+
+        .kpi-metrics {
+            display: grid;
+            gap: 15px;
+        }
+
+        .kpi-metric-item {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .kpi-metric-info h5 {
+            color: var(--primary);
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .kpi-metric-info p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .kpi-metric-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .kpi-metric-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .kpi-metric-btn.edit {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .kpi-metric-btn.delete {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .kpi-metric-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .kpi-program-list {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .kpi-program-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #E2E8F0;
+            transition: all 0.3s ease;
+            flex-wrap: wrap; /* Tambahan untuk responsif */
+            gap: 10px;
+        }
+
+        .kpi-program-item:hover {
+            background: var(--bg);
+        }
+
+        .kpi-program-item:last-child {
+            border-bottom: none;
+        }
+
+        .kpi-program-info {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .kpi-program-info h4 {
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .kpi-program-info p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .kpi-program-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .kpi-status-badge {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .kpi-status-badge.not-started {
+            background: #E2E8F0;
+            color: var(--text-light);
+        }
+
+        .kpi-status-badge.in-progress {
+            background: rgba(66, 153, 225, 0.1);
+            color: var(--info);
+        }
+
+        .kpi-status-badge.completed {
+            background: rgba(72, 187, 120, 0.1);
+            color: var(--success);
+        }
+
+        .kpi-status-badge.delayed {
+            background: rgba(245, 101, 101, 0.1);
+            color: var(--danger);
+        }
+
+        .kpi-program-progress {
+            width: 150px;
+        }
+
+        .kpi-program-progress .kpi-progress {
+            height: 8px;
+            margin-bottom: 5px;
+        }
+
+        .kpi-program-progress span {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* KPI Chart Placeholder */
+        .kpi-chart-container {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .kpi-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .kpi-chart-header h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .kpi-chart {
+            height: 300px;
+            min-width: 500px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 20px 0;
+            border-bottom: 2px solid #E2E8F0;
+            border-left: 2px solid #E2E8F0;
+        }
+
+        .kpi-bar {
+            width: 60px;
+            background: linear-gradient(180deg, var(--purple), #805AD5);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .kpi-bar:hover {
+            opacity: 0.8;
+        }
+
+        .kpi-bar-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+
+        .kpi-bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--purple);
+        }
+
+        /* KPI Report Section */
+        .kpi-report-section {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+
+        .kpi-report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--bg);
+        }
+
+        .kpi-report-header h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .kpi-report-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .kpi-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .kpi-summary-item {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .kpi-summary-item i {
+            font-size: 2rem;
+            color: var(--purple);
+            margin-bottom: 10px;
+        }
+
+        .kpi-summary-item h4 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .kpi-summary-item p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
         /* Users Table Styles */
-        .role-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; display: inline-block;}
+        .role-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
         .role-badge.admin { background: var(--primary); color: var(--white); }
         .role-badge.editor { background: var(--info); color: var(--white); }
         .role-badge.viewer { background: var(--text-light); color: var(--white); }
 
         /* Responsive Fixes */
         @media (max-width: 768px) {
-            .header h1 { font-size: 1.5rem; }
-            .nav-menu { gap: 5px; }
-            .nav-btn { padding: 10px 16px; font-size: 0.85rem; }
-            .program-grid { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .footer-signature { flex-direction: column; gap: 20px; }
-            .admin-actions { flex-direction: column; }
-            .admin-btn { width: 100%; justify-content: center; }
-            .admin-btn.logout { margin-left: 0; }
+            .header-top-wrapper {
+                gap: 15px;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .logo-gkps, .logo-tema {
+                height: 70px; /* Ukuran logo lebih kecil di ponsel */
+            }
+
+            .header-text h1 {
+                font-size: 1.6rem;
+            }
+
+            .header p {
+                font-size: 0.8rem;
+            }
+
+            .nav-menu {
+                gap: 5px;
+            }
+
+            .nav-btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+
+            .program-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-signature {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .admin-actions {
+                flex-direction: column;
+            }
+
+            .admin-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .admin-btn.logout {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -759,11 +1703,14 @@
     </div>
 
     <header class="header">
-        <div class="header-logo">
-            <i class="fas fa-church"></i>
+        <div class="header-top-wrapper">
+            <img src="LOGO-GKPS-ASLI-1.png" alt="Logo GKPS" class="logo-gkps">
+            <div class="header-text">
+                <h1>GSM Planner 2026</h1>
+                <p>GKPS Resort Tangerang</p>
+            </div>
+            <img src="logo-tema-gkps.jpg" alt="Logo Tema GKPS" class="logo-tema">
         </div>
-        <h1>GSM Planner 2026</h1>
-        <p>GKPS Resort Tangerang</p>
         
         <div class="theme-box">
             <h3>"Gareja na Sari, Martangkupas, Janah Siboan Pasu-pasu"</h3>
@@ -838,7 +1785,7 @@
 
         <div id="finance" class="view-section">
             <h2 class="section-title">Dana dan Keuangan</h2>
-            <div class="data-table-container">
+            <div class="finance-table">
                 <table>
                     <thead>
                         <tr>
@@ -847,7 +1794,7 @@
                             <th>Keluaran (Outcome)</th>
                             <th>Manfaat (Impact)</th>
                             <th>Pelaksanaan</th>
-                            <th class="admin-only">Aksi</th>
+                            <th class="admin-only" style="display: none;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="financeTable"></tbody>
@@ -857,6 +1804,18 @@
 
         <div id="meetings" class="view-section">
             <h2 class="section-title">Rapat & Notulen</h2>
+
+            <div class="storage-warning" id="storageWarning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Peringatan: Penyimpanan lokal hampir penuh. Harap hapus file yang tidak diperlukan.</span>
+                <div class="storage-progress">
+                    <div class="storage-progress-bar" id="storageProgressBar"></div>
+                </div>
+                <div class="storage-info">
+                    <span id="storageUsed">0 MB</span>
+                    <span id="storageLimit">5 MB</span>
+                </div>
+            </div>
 
             <div class="notulen-section">
                 <div class="notulen-header">
@@ -883,12 +1842,13 @@
         <div id="kpi" class="view-section">
             <h2 class="section-title"><i class="fas fa-chart-line"></i> Key Performance Indicator</h2>
 
-            <div class="kpi-dashboard" id="kpiDashboard"></div>
+            <div class="kpi-dashboard" id="kpiDashboard">
+                </div>
 
             <div class="kpi-chart-container">
                 <div class="kpi-chart-header">
                     <h3><i class="fas fa-chart-bar"></i> Progress KPI per Kategori</h3>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 10px;">
                         <button class="btn btn-success" onclick="exportKpiExcel()">
                             <i class="fas fa-file-excel"></i> Export Excel
                         </button>
@@ -897,14 +1857,16 @@
                         </button>
                     </div>
                 </div>
-                <div class="kpi-chart" id="kpiChart"></div>
+                <div class="kpi-chart" id="kpiChart">
+                    </div>
             </div>
 
             <div class="kpi-program-list">
                 <h3 style="font-family: 'Playfair Display', serif; color: var(--primary); margin-bottom: 20px;">
                     <i class="fas fa-tasks"></i> Status Program
                 </h3>
-                <div id="kpiProgramList"></div>
+                <div id="kpiProgramList">
+                    </div>
             </div>
 
             <div class="kpi-report-section">
@@ -916,7 +1878,8 @@
                         </button>
                     </div>
                 </div>
-                <div class="kpi-summary-grid" id="kpiSummary"></div>
+                <div class="kpi-summary-grid" id="kpiSummary">
+                    </div>
             </div>
         </div>
 
@@ -926,7 +1889,7 @@
                 <button class="btn btn-primary" onclick="openUserModal()"><i class="fas fa-user-plus"></i> Tambah User</button>
             </div>
             
-            <div class="data-table-container">
+            <div class="finance-table">
                 <table>
                     <thead>
                         <tr>
@@ -936,7 +1899,8 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="usersTableBody"></tbody>
+                    <tbody id="usersTableBody">
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -990,7 +1954,7 @@
                         <input type="text" id="editTitle" required>
                     </div>
 
-                    <div class="form-group" id="groupCategory">
+                    <div class="form-group">
                         <label>Kategori</label>
                         <select id="editCategory">
                             <option value="A">A. Persekutuan</option>
@@ -1007,7 +1971,7 @@
                         <textarea id="editDate" rows="3" required placeholder="Gunakan enter untuk baris baru..."></textarea>
                     </div>
 
-                    <div class="form-group" id="groupLocation">
+                    <div class="form-group">
                         <label>Lokasi</label>
                         <input type="text" id="editLocation">
                     </div>
@@ -1022,7 +1986,7 @@
                         <textarea id="editImpact" required></textarea>
                     </div>
 
-                    <div class="form-group" id="groupMethod">
+                    <div class="form-group">
                         <label>Metode/Pelaksana</label>
                         <textarea id="editMethod"></textarea>
                     </div>
@@ -1083,9 +2047,14 @@
                         <label>Status Publikasi</label>
                         <select id="notulenStatus">
                             <option value="published">Publik (Semua bisa download)</option>
-                            <option value="review">Review (Admin/Editor saja)</option>
+                            <option value="review">Review (Admin saja)</option>
                             <option value="draft">Draft (Belum publik)</option>
                         </select>
+                    </div>
+
+                    <div class="storage-warning" id="uploadStorageWarning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Peringatan: Ukuran file terlalu besar. Penyimpanan lokal terbatas.</span>
                     </div>
 
                     <div class="form-actions">
@@ -1142,7 +2111,7 @@
                         <label>Status Publikasi</label>
                         <select id="editNotulenStatus">
                             <option value="published">Publik (Semua bisa download)</option>
-                            <option value="review">Review (Admin/Editor saja)</option>
+                            <option value="review">Review (Admin saja)</option>
                             <option value="draft">Draft (Belum publik)</option>
                         </select>
                     </div>
@@ -1315,17 +2284,17 @@
     <div class="login-modal" id="loginModal">
         <div class="login-box">
             <div class="logo">
-                <i class="fas fa-user-circle"></i>
+                <i class="fas fa-user-shield"></i>
             </div>
-            <h2>Portal Login</h2>
+            <h2>Admin Login</h2>
             <form id="loginForm">
                 <div class="form-group">
                     <label>Username</label>
-                    <input type="text" id="loginUsername" required placeholder="Masukkan username">
+                    <input type="text" id="adminUsername" required placeholder="Masukkan username">
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" id="loginPassword" required placeholder="Masukkan password">
+                    <input type="password" id="adminPassword" required placeholder="Masukkan password">
                 </div>
                 <div class="form-actions" style="justify-content: center;">
                     <button type="button" class="btn btn-secondary" onclick="closeLoginModal()">Batal</button>
@@ -1380,12 +2349,13 @@
             appId: "1:6039178513:web:f064f5872e80ac0a4650b0"
         };
 
+        // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
 
-        // ==================== DEFAULT DATA ====================
+        // ==================== DEFAULT DATA (FULL) ====================
         const defaultUsers = [
             { id: 1, username: 'admin', password: 'gsm2026', role: 'admin' }
         ];
@@ -1396,10 +2366,10 @@
                 title: 'Kebaktian Sekolah Minggu',
                 date: 'Setiap Hari Minggu',
                 location: 'Tiap Jemaat',
-                outcome: 'Terlaksananya kebaktian Sekolah Minggu secara rutin dan terkoordinasi',
-                impact: 'Pertumbuhan iman anak-anak Sekolah Minggu',
-                method: 'Ibadah anak',
-                kpi: { status: 'in-progress', progress: 75, participants: 150, quality: 8, notes: 'Berjalan rutin' }
+                outcome: 'Terlaksananya kebaktian Sekolah Minggu secara rutin dan terkoordinasi di tiap jemaat',
+                impact: 'Pertumbuhan iman anak-anak Sekolah Minggu dan meningkatnya kedisiplinan serta tanggung jawab Guru Sekolah Minggu',
+                method: 'Metode ibadah anak (liturgi anak, pujian, cerita Alkitab, aktivitas kreatif); dilaksanakan oleh GSM masing-masing jemaat',
+                kpi: { status: 'in-progress', progress: 75, participants: 150, quality: 8, notes: 'Berjalan rutin setiap minggu' }
             },
             {
                 id: 2, category: 'A', catName: 'Persekutuan',
@@ -1407,35 +2377,212 @@
                 date: '24 Mei 2026',
                 location: 'Tiap Jemaat',
                 outcome: 'Terselenggaranya perayaan Pesta Sekolah Minggu tingkat jemaat',
-                impact: 'Memperingati hari pentakosta/turunnya Roh Kudus',
-                method: 'Ibadah syukur',
+                impact: 'Memperingati hari pentakosta/turunnya Roh Kudus dan ulang tahun seksi sekolah minggu GKPS',
+                method: 'Bentuk acara ibadah syukur, pentas seni dan penggalangan dana. Panitia dibentuk oleh PSM jemaat',
                 kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
             },
             {
-                id: 3, category: 'B', catName: 'Kesaksian',
-                title: 'Sermon Hadomuan Sekolah Minggu',
-                date: '12 April 2026',
-                location: 'GKPS Graha Raya',
-                outcome: 'Persekutuan dan pembinaan GSM se-Resort',
-                impact: 'Meningkatkan kualitas pengajaran GSM',
-                method: 'Pertemuan onsite dan zoom',
-                kpi: { status: 'completed', progress: 100, participants: 80, quality: 9, notes: 'Sudah terlaksana' }
+                id: 3, category: 'A', catName: 'Persekutuan',
+                title: 'Pesparawi Sekolah Minggu Tingkat Resort',
+                date: '31 Mei 2026',
+                location: 'GKPS Tangerang',
+                outcome: 'Terbentuknya panitia Pesparawi Tingkat Resort yang terstruktur dan memiliki pembagian tugas yang jelas. Terbentuknya Tim Pesparawi Sekolah Minggu resort yang akan mengikuti Pesparawi Sekolah Minggu Distrik 7',
+                impact: 'Terlihat Bakat Anak Sekolah Minggu GKPS Resort',
+                method: 'Dalam ibadah minggu. Peserta dari 5 Jemaat mengikuti kegiatan Paduan Suara, Vocal Group dan Bible Story Telling Bahasa Simalungun',
+                kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
+            },
+            {
+                id: 4, category: 'B', catName: 'Kesaksian',
+                title: 'Sermon Hadomuan Sekolah Minggu GKPS Resort Tangerang',
+                date: '12 April 2026 & 09 Agustus 2026',
+                location: 'GKPS Graha Raya & GKPS Serang Banten',
+                outcome: 'Terselenggaranya persekutuan dan pembinaan GSM se-Resort',
+                impact: 'Meningkatkan kualitas pengajaran dan mempererat persaudaraan antar GSM',
+                method: '2 pertemuan onsite dan 2 pertemuan zoom. Narasumber menjelaskan bahan ajar dari buku Aku Gereja, GSM menyampaikan paparan, diskusi, dan menyampaikan jadwal tukar pelayanan',
+                kpi: { status: 'in-progress', progress: 50, participants: 80, quality: 9, notes: 'Pertemuan pertama sudah terlaksana' }
+            },
+            {
+                id: 5, category: 'B', catName: 'Kesaksian',
+                title: 'Pertukaran Pelayanan Guru Sekolah Minggu',
+                date: '19 April 2026 & 16 Agustus 2026',
+                location: 'Sesuai Jadwal Pengurus Resort',
+                outcome: 'Terselenggaranya pertukaran pelayanan GSM se-Resort Tangerang',
+                impact: 'Menambah wawasan pelayanan dan memperkaya metode pengajaran',
+                method: 'Dilaksanakan sesuai jadwal dari pengurus resort. GSM mengikuti tukar pelayanan sesuai jadwal',
+                kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
+            },
+            {
+                id: 6, category: 'C', catName: 'Pelayanan',
+                title: 'Kunjungan ke SM Jemaat',
+                date: '19 April 2026 & 16 Agustus 2026',
+                location: 'GKPS Graha Raya & GKPS Serang',
+                outcome: 'Terlaksananya kunjungan dan monitoring pelayanan SM',
+                impact: 'Memberikan motivasi dan evaluasi bagi PSM/GSM serta meningkatnya koordinasi pelayanan Seksi Sekolah Minggu Resort dan Jemaat',
+                method: 'Dilaksanakan sesuai jadwal oleh Pengurus Seksi Sekolah Minggu Resort',
+                kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
+            },
+            {
+                id: 7, category: 'C', catName: 'Pelayanan',
+                title: 'Pembinaan GSM se-Resort Tangerang',
+                date: '11 Juli 2026',
+                location: 'TBD',
+                outcome: 'Terselenggaranya pelatihan dan pembinaan GSM',
+                impact: 'Meningkatkan kompetensi GSM dalam mengajar dan membina Anak Sekolah Minggu',
+                method: 'Narasumber fultimer/Praktisi Pendidikan Kristen dan Pelayanan Anak yang profesional',
+                kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
+            },
+            {
+                id: 8, category: 'C', catName: 'Pelayanan',
+                title: 'Ibadah Sekolah Minggu "Simalungun Day"',
+                date: 'Minggu ke-4 Setiap Bulan',
+                location: 'Tiap Jemaat (Kelas Besar dan Kelas Remaja)',
+                outcome: 'Terselenggaranya ibadah bernuansa budaya Simalungun',
+                impact: 'Menanamkan kecintaan terhadap budaya dan identitas GKPS',
+                method: 'Agenda dan Pujian Bahasa Simalungun menggunakan Buku doding haleluya Sekolah Minggu. GSM menshare kegiatan melalui WA Group',
+                kpi: { status: 'in-progress', progress: 60, participants: 200, quality: 8, notes: 'Dilaksanakan rutin bulanan' }
+            },
+            {
+                id: 9, category: 'D', catName: 'Distrik',
+                title: 'Bona Taun Pengurus dan GSM Distrik VII',
+                date: '25 Januari 2026',
+                location: 'GKPS Cikoko',
+                outcome: 'Terlaksananya ibadah awal tahun Distrik',
+                impact: 'Mempererat persaudaraan dan semangat pelayanan',
+                method: 'Koordinasi Distrik VII',
+                kpi: { status: 'completed', progress: 100, participants: 120, quality: 9, notes: 'Sudah terlaksana dengan baik' }
+            },
+            {
+                id: 10, category: 'D', catName: 'Distrik',
+                title: 'Ibadah Natal Sekolah Minggu Difabel Distrik VII',
+                date: 'Sesuai Jadwal Tim',
+                location: 'Distrik VII',
+                outcome: 'Terselenggaranya ibadah Natal bagi Anak Sekolah Minggu Difabel dan Orang Tua',
+                impact: 'Meningkatkan kepedulian dan kasih Kristus bagi semua Anak Sekolah Minggu Difabel dan Orang Tua',
+                method: 'Dilaksanakan sesuai jadwal Tim Difabel Sekolah Minggu distrik VII',
+                kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
+            },
+            {
+                id: 11, category: 'D', catName: 'Distrik',
+                title: 'Sermon GSM Distrik VII',
+                date: '27 September 2026',
+                location: 'Via Zoom',
+                outcome: 'Terselenggaranya persekutuan dan pembinaan GSM Se-Distrik VII',
+                impact: 'Meningkatkan kualitas pengajaran dan mempererat persaudaraan antar GSM',
+                method: 'Narasumber menjelaskan bahan ajar, diskusi, dan menyampaikan jadwal tukar pelayanan',
+                kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
+            },
+            {
+                id: 12, category: 'D', catName: 'Distrik',
+                title: 'Pertukaran Pelayanan Guru Sekolah Minggu se-GKPS Distrik VII',
+                date: '04 Oktober 2026',
+                location: 'Kegiatan Penelahaan Alkitab',
+                outcome: 'Pengurus dan GSM semakin berakar dan bertumbuh dalam Iman',
+                impact: 'Meningkatkan kualitas dan kesatuan pelayanan Sekolah Minggu di tingkat Distrik VII',
+                method: 'Dalam kegiatan Penelahaan Alkitab saat sermon Sekolah Minggu se-Distrik VII',
+                kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
+            },
+            {
+                id: 13, category: 'D', catName: 'Distrik',
+                title: 'Pembinaan GSM GKPS se-Distrik VII',
+                date: '26 Juni 2026',
+                location: 'Distrik VII',
+                outcome: 'Partisipasi aktif dalam pembinaan GSM tingkat Distrik VII',
+                impact: 'Standarisasi mutu pelayanan GSM di tingkat Distrik VII',
+                method: 'Dilaksanakan pada tanggal 26 Juni 2026',
+                kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
+            },
+            {
+                id: 14, category: 'D', catName: 'Distrik',
+                title: 'Pesparawi Seksi Sekolah Minggu Distrik VII',
+                date: '20 Juni 2026',
+                location: 'Distrik VII',
+                outcome: 'Terbentuknya panitia Pesparawi Sekolah Minggu Tingkat Distrik VII yang terstruktur. Terbentuknya Tim Pesparawi Sekolah Minggu distrik VII yang akan mengikuti Pesparawi Sekolah Minggu Sinode',
+                impact: 'Terlihat bakat anak Sekolah Minggu Distrik VII',
+                method: 'Melalui perlombaan pesparawi Sekolah Minggu distrik VII. Peserta dari 16 Resort (Paduan Suara, Vocal Group dan Bible Story Telling Bahasa Simalungun)',
+                kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
             }
         ];
 
         const defaultFinance = [
-            { id: 1, title: 'Subsidi Kas Resort', outcome: 'Terlaksana subsidi', impact: 'Mendukung program', execution: 'Sesuai keputusan' },
-            { id: 2, title: 'Pesta Pembangunan', outcome: 'Ibadah SM Se-Resort', impact: 'Ibadah bersama', execution: '07 Juni 2026' }
+            {
+                id: 1,
+                title: 'Pesta Sekolah Minggu',
+                outcome: 'Terselenggaranya kegiatan Sekolah Minggu dalam rangka memperingati Hari Pentakosta/perayaan Ulang Tahun Sekolah Minggu GKPS. Terlaksana hasil penggalangan dana seksi Sekolah Minggu',
+                impact: 'Mendukung kelancaran program pelayanan dan keuangan',
+                execution: '24 Mei 2026 dalam bentuk kegiatan Sekolah Minggu dan Penggalangan dana'
+            },
+            {
+                id: 2,
+                title: 'Subsidi Kas dari Pengurus Resort',
+                outcome: 'Terlaksana subsidi Kas Sekolah Minggu Resort',
+                impact: 'Mendukung kelancaran program pelayanan dan Keuangan',
+                execution: 'Sesuai keputusan rapat Resort'
+            },
+            {
+                id: 3,
+                title: 'Ibadah Pesta Pembangunan GKPS Tigaraksa',
+                outcome: 'Ibadah Sekolah Minggu Se-Resort',
+                impact: 'ASM dan GSM se-Resort Tangerang beribadah bersama di GKPS Tangerang',
+                execution: '07 Juni 2026 di GKPS Tangerang dalam kegiatan Ibadah Sekolah Minggu dan Perlombaan. Pelaksana yaitu Panitia Pembangunan GKPS Tigaraksa'
+            }
         ];
 
         const defaultMeetings = [
-            { id: 1, title: 'Rapat Pengurus Resort', outcome: 'Koordinasi program', impact: 'Program terukur', execution: 'Sesuai jadwal' },
-            { id: 2, title: 'Rapat Pengurus Lengkap', outcome: 'Laporan tahunan', impact: 'Evaluasi kinerja', execution: '15 Maret 2026' }
+            {
+                id: 1,
+                title: 'Rapat Pengurus Sekolah Minggu Resort',
+                outcome: 'Terselenggaranya rapat koordinasi dan evaluasi',
+                impact: 'Program Pelayanan berjalan sesuai dengan rencana dan terukur',
+                execution: 'Dilaksanakan sesuai jadwal onsite dan zoom'
+            },
+            {
+                id: 2,
+                title: 'Rapat Pengurus Lengkap Seksi Sekolah Minggu',
+                outcome: 'Terselenggaranya rapat koordinasi dan evaluasi. Laporan Program Pelayanan dan Keuangan 2025 dan Rencana Program Pelayanan dan Keuangan 2026',
+                impact: 'Program Pelayanan berjalan sesuai dengan rencana dan terukur',
+                execution: '15 Maret 2026 di GKPS Tangerang, mengundang seluruh PSM Jemaat'
+            },
+            {
+                id: 3,
+                title: 'Rapat PSM Resort dan PSM Jemaat',
+                outcome: 'Terselenggaranya rapat koordinasi dan evaluasi',
+                impact: 'Program Pelayanan berjalan sesuai dengan rencana dan terukur',
+                execution: 'Dilaksanakan sesuai dengan jadwal'
+            },
+            {
+                id: 4,
+                title: 'Rapat Sinode Resort',
+                outcome: 'Terselenggaranya rapat koordinasi dan evaluasi',
+                impact: 'Program Pelayanan berjalan sesuai dengan rencana dan terukur',
+                execution: 'Dilaksanakan sesuai dengan jadwal'
+            },
+            {
+                id: 5,
+                title: 'Rapat Team Anak SM Difabel Distrik VII',
+                outcome: 'Terselenggaranya rapat koordinasi dan evaluasi',
+                impact: 'Program Pelayanan berjalan sesuai dengan rencana dan terukur',
+                execution: 'Dilaksanakan sesuai dengan jadwal'
+            },
+            {
+                id: 6,
+                title: 'Rapat-Rapat Pengurus Distrik VII',
+                outcome: 'Terselenggaranya rapat koordinasi dan evaluasi',
+                impact: 'Program Pelayanan berjalan sesuai dengan rencana dan terukur',
+                execution: 'Dilaksanakan sesuai dengan jadwal'
+            }
         ];
 
         const defaultKpiSettings = {
-            targetCompletion: 80, targetTimeliness: 90, targetParticipation: 100, targetQuality: 8,
-            weights: { completion: 40, timeliness: 30, participation: 15, quality: 15 }
+            targetCompletion: 80,
+            targetTimeliness: 90,
+            targetParticipation: 100,
+            targetQuality: 8,
+            weights: {
+                completion: 40,
+                timeliness: 30,
+                participation: 15,
+                quality: 15
+            }
         };
 
         // ==================== STATE MANAGEMENT ====================
@@ -1447,12 +2594,18 @@
         let usersData = [];
         
         let currentUserRole = null;
-        let isAdmin = false; 
+        let isAdmin = false;
         
         let clickCount = 0;
         let clickTimer = null;
         let selectedFile = null;
         let editSelectedFile = null;
+
+        // Admin Credentials (Fallback if db empty)
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'gsm2026';
+
+        const STORAGE_LIMIT = 5 * 1024 * 1024;
 
         // ==================== TEXT FORMATTER ====================
         function escapeHtml(unsafe) {
@@ -1472,6 +2625,7 @@
         function init() {
             setupAdminTrigger();
             
+            // Listen to Firebase Realtime Database
             db.ref('gsm_data_2026').on('value', (snapshot) => {
                 const data = snapshot.val();
                 
@@ -1484,30 +2638,33 @@
                     usersData = data.users || [...defaultUsers];
                 } else {
                     loadLocalData();
-                    saveData();
+                    saveData(); // Sync local to Firebase
                 }
                 
-                checkUserSession(); 
+                checkUserSession();
                 
                 updateStats();
                 renderFeaturedPrograms();
                 
-                const activeFilter = document.querySelector('.filter-btn.active');
-                let catFilter = 'all';
-                if(activeFilter) {
-                    if(activeFilter.textContent.includes('A.')) catFilter = 'A';
-                    if(activeFilter.textContent.includes('B.')) catFilter = 'B';
-                    if(activeFilter.textContent.includes('C.')) catFilter = 'C';
-                    if(activeFilter.textContent.includes('D.')) catFilter = 'D';
+                const activeFilterBtn = document.querySelector('.filter-btn.active');
+                let currentCat = 'all';
+                if (activeFilterBtn) {
+                    if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
+                    else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
+                    else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
+                    else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
                 }
+                renderAllPrograms(currentCat);
                 
-                renderAllPrograms(catFilter);
                 renderFinanceTable();
                 renderMeetings();
                 renderNotulenList();
+                updateStorageWarning();
                 
                 if (currentUserRole === 'admin') renderUsersTable();
-                if (isAdmin && document.getElementById('kpi').classList.contains('active')) renderKpiDashboard();
+                if (document.getElementById('kpi').classList.contains('active') && isAdmin) {
+                    renderKpiDashboard();
+                }
             });
         }
 
@@ -1523,6 +2680,7 @@
 
         function saveData() {
             try {
+                // Push to Firebase Realtime Database
                 db.ref('gsm_data_2026').set({
                     programs: programsData,
                     finance: financeData,
@@ -1531,7 +2689,9 @@
                     kpiSettings: kpiSettings,
                     users: usersData
                 });
+
                 updateStats();
+                updateStorageWarning();
                 return true;
             } catch (e) {
                 console.error("Save failed", e);
@@ -1541,55 +2701,31 @@
 
         function resetData() {
             if (currentUserRole !== 'admin') {
-                showToast('Hanya Admin yang dapat mereset data!', 'error');
+                showToast('Hanya Super Admin yang dapat mereset data!', 'error');
                 return;
             }
-            if (confirm('Apakah Anda yakin ingin mereset semua data? PERHATIAN: User juga akan kembali ke default admin.')) {
+            if (confirm('Apakah Anda yakin ingin mereset semua data ke default? Semua perubahan, notulen, dan user akan hilang!')) {
+                // Reset Firebase
                 db.ref('gsm_data_2026').remove().then(() => {
                     loadLocalData();
-                    saveData();
+                    saveData(); // Push defaults to Firebase
                     showToast('Data berhasil direset!', 'success');
                     logoutAdmin();
                 });
             }
         }
 
-        // ==================== VIEW / TAB MANAGEMENT (SPA FIX) ====================
-        function showView(viewId, event) {
-            // Cek otorisasi terlebih dahulu
-            if (viewId === 'kpi' && !isAdmin) { showToast('Akses ditolak! Hanya Admin/Editor', 'error'); return; }
-            if (viewId === 'users' && currentUserRole !== 'admin') { showToast('Akses ditolak! Hanya Super Admin', 'error'); return; }
-
-            // 1. Sembunyikan secara paksa semua bagian view (Mencegah konten tab bocor/numpuk)
-            document.querySelectorAll('.view-section').forEach(v => {
-                v.classList.remove('active');
-            });
-            
-            // 2. Tampilkan hanya view yang dituju
-            const targetView = document.getElementById(viewId);
-            if (targetView) targetView.classList.add('active');
-            
-            // 3. Reset highlight warna di semua tombol menu navigasi
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
-            // 4. Highlight tombol menu yang sedang diklik
-            if (event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
-            } else {
-                // Jika dipanggil dari kode lain (bukan klik langsung), cari tombol berdasarkan onclick string-nya
-                const btn = document.querySelector(`.nav-btn[onclick*="${viewId}"]`);
-                if (btn) btn.classList.add('active');
-            }
-            
-            // 5. Render ulang komponen spesifik tab jika diperlukan
-            if (viewId === 'kpi') renderKpiDashboard();
-            if (viewId === 'users') renderUsersTable();
-            
-            // 6. Scroll halus ke atas
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // ==================== STORAGE MANAGEMENT ====================
+        function getStorageUsage() {
+            return 0; // Not critical anymore since we use Firebase
         }
 
-        // ==================== ROLE & AUTHENTICATION MANAGEMENT ====================
+        function updateStorageWarning() {
+            const warning = document.getElementById('storageWarning');
+            warning.classList.remove('show');
+        }
+
+        // ==================== ADMIN & ROLE MANAGEMENT ====================
         function checkUserSession() {
             const role = sessionStorage.getItem('gsm_user_role');
             const username = sessionStorage.getItem('gsm_user_name');
@@ -1601,32 +2737,58 @@
         }
 
         function setupAdminTrigger() {
-            document.querySelectorAll('.signature-box').forEach(sig => {
+            const signatures = document.querySelectorAll('.signature-box');
+            signatures.forEach(sig => {
                 sig.addEventListener('click', handleSignatureClick);
             });
+
             document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.shiftKey && (e.key === 'G' || e.key === 'g')) { e.preventDefault(); openLoginModal(); }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'G' || e.key === 'g')) {
+                    e.preventDefault();
+                    openLoginModal();
+                }
             });
+
+            document.getElementById('adminTrigger').addEventListener('click', openLoginModal);
         }
 
         function handleSignatureClick() {
             clickCount++;
             clearTimeout(clickTimer);
-            clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
-            if (clickCount >= 5) { openLoginModal(); clickCount = 0; }
+            clickTimer = setTimeout(() => {
+                clickCount = 0;
+            }, 2000);
+
+            if (clickCount >= 5) {
+                openLoginModal();
+                clickCount = 0;
+            }
         }
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const uname = document.getElementById('loginUsername').value.trim();
-            const pass = document.getElementById('loginPassword').value;
 
-            const user = usersData.find(u => u.username === uname && u.password === pass);
+            // Sesuai kode asli, pastikan mengambil ID input yang persis sama
+            const unameInput = document.getElementById('adminUsername');
+            const passInput = document.getElementById('adminPassword');
             
+            const uname = unameInput ? unameInput.value.trim() : '';
+            const pass = passInput ? passInput.value : '';
+
+            // Cari user di database
+            let user = usersData.find(u => u.username === uname && u.password === pass);
+            
+            // Fallback jika database belum sinkron dan butuh akses darurat
+            if (!user && uname === ADMIN_USERNAME && pass === ADMIN_PASSWORD) {
+                user = { id: 1, username: 'admin', password: 'gsm2026', role: 'admin' };
+            }
+
             if (user) {
                 sessionStorage.setItem('gsm_user_role', user.role);
                 sessionStorage.setItem('gsm_user_name', user.username);
                 applyRole(user.role, user.username);
+                
+                showAdminMode(); // Mempertahankan pemanggilan fungsi lama
                 closeLoginModal();
                 document.getElementById('loginForm').reset();
                 showToast(`Selamat datang, ${user.username}!`, 'success');
@@ -1635,73 +2797,113 @@
             }
         });
 
+        // Diperbarui agar mengakomodasi sistem Role baru
+        function showAdminMode() {
+            const role = sessionStorage.getItem('gsm_user_role') || 'admin';
+            const username = sessionStorage.getItem('gsm_user_name') || 'Admin';
+            applyRole(role, username);
+        }
+
         function applyRole(role, username) {
             currentUserRole = role;
             isAdmin = (role === 'admin' || role === 'editor');
             
             const badge = document.getElementById('adminBadge');
-            badge.className = `admin-badge show ${role}`;
-            document.getElementById('adminBadgeText').textContent = `${username} (${role.toUpperCase()})`;
+            if(badge) badge.className = `admin-badge show ${role}`;
+            
+            const badgeText = document.getElementById('adminBadgeText');
+            if(badgeText) badgeText.textContent = `${username} (${role.toUpperCase()})`;
 
             // General Admin/Editor UI changes
             if (isAdmin) {
-                document.getElementById('adminActions').classList.add('show');
-                document.getElementById('uploadNotulenBtn').style.display = 'flex';
+                const adminActions = document.getElementById('adminActions');
+                if(adminActions) adminActions.classList.add('show');
+                
+                const uploadBtn = document.getElementById('uploadNotulenBtn');
+                if(uploadBtn) uploadBtn.style.display = 'flex';
+                
                 document.querySelectorAll('.card-actions').forEach(el => el.classList.add('show'));
                 document.querySelectorAll('.admin-only').forEach(el => {
                     el.style.display = el.tagName === 'TD' || el.tagName === 'TH' ? 'table-cell' : 'flex';
                 });
                 document.querySelectorAll('.notulen-btn.edit, .notulen-btn.delete').forEach(el => el.classList.add('show'));
                 document.querySelectorAll('.card-action-btn.kpi').forEach(el => el.classList.add('show'));
-                document.getElementById('kpiNavBtn').classList.add('show');
-                document.getElementById('kpiStatCard').classList.add('show');
+                
+                const kpiNavBtn = document.getElementById('kpiNavBtn');
+                if(kpiNavBtn) kpiNavBtn.classList.add('show');
+                
+                const kpiStatCard = document.getElementById('kpiStatCard');
+                if(kpiStatCard) kpiStatCard.classList.add('show');
             }
 
             // Super Admin specific changes
             if (role === 'admin') {
                 document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'flex');
-                document.getElementById('usersNavBtn').classList.add('show');
+                const usersNavBtn = document.getElementById('usersNavBtn');
+                if(usersNavBtn) usersNavBtn.classList.add('show');
             } else {
                 document.querySelectorAll('.super-admin-only').forEach(el => el.style.display = 'none');
-                document.getElementById('usersNavBtn').classList.remove('show');
+                const usersNavBtn = document.getElementById('usersNavBtn');
+                if(usersNavBtn) usersNavBtn.classList.remove('show');
             }
 
-            // Viewer specific
+            // Viewer specific - Just display logout button in actions
             if (role === 'viewer') {
-                document.getElementById('adminActions').classList.add('show');
-                Array.from(document.getElementById('adminActions').children).forEach(btn => {
-                    if (!btn.classList.contains('logout')) btn.style.display = 'none';
-                });
+                const adminActions = document.getElementById('adminActions');
+                if(adminActions) {
+                    adminActions.classList.add('show');
+                    Array.from(adminActions.children).forEach(btn => {
+                        if (!btn.classList.contains('logout')) btn.style.display = 'none';
+                    });
+                }
             } else {
-                Array.from(document.getElementById('adminActions').children).forEach(btn => {
-                    if(!btn.classList.contains('super-admin-only')) btn.style.display = 'flex';
-                });
+                const adminActions = document.getElementById('adminActions');
+                if(adminActions) {
+                    Array.from(adminActions.children).forEach(btn => {
+                        if(!btn.classList.contains('super-admin-only')) btn.style.display = 'flex';
+                    });
+                }
             }
 
-            const activeFilter = document.querySelector('.filter-btn.active');
-            let catFilter = 'all';
-            if(activeFilter && activeFilter.textContent.includes('A.')) catFilter = 'A';
-            if(activeFilter && activeFilter.textContent.includes('B.')) catFilter = 'B';
-            if(activeFilter && activeFilter.textContent.includes('C.')) catFilter = 'C';
-            if(activeFilter && activeFilter.textContent.includes('D.')) catFilter = 'D';
-
-            renderAllPrograms(catFilter);
+            // Always re-render lists to apply buttons
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            let currentCat = 'all';
+            if (activeFilterBtn) {
+                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
+                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
+                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
+                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
+            }
+            renderAllPrograms(currentCat);
             renderFinanceTable();
             renderMeetings();
             renderNotulenList();
-            if (isAdmin && document.getElementById('kpi').classList.contains('active')) renderKpiDashboard();
+            
+            const kpiElement = document.getElementById('kpi');
+            if (isAdmin && kpiElement && kpiElement.classList.contains('active')) renderKpiDashboard();
         }
 
         function hideAdminMode() {
             currentUserRole = null;
             isAdmin = false;
             
-            document.getElementById('adminBadge').className = 'admin-badge';
-            document.getElementById('adminActions').classList.remove('show');
-            document.getElementById('uploadNotulenBtn').style.display = 'none';
-            document.getElementById('kpiNavBtn').classList.remove('show');
-            document.getElementById('usersNavBtn').classList.remove('show');
-            document.getElementById('kpiStatCard').classList.remove('show');
+            const badge = document.getElementById('adminBadge');
+            if(badge) badge.className = 'admin-badge';
+            
+            const adminActions = document.getElementById('adminActions');
+            if(adminActions) adminActions.classList.remove('show');
+            
+            const uploadBtn = document.getElementById('uploadNotulenBtn');
+            if(uploadBtn) uploadBtn.style.display = 'none';
+            
+            const kpiNavBtn = document.getElementById('kpiNavBtn');
+            if(kpiNavBtn) kpiNavBtn.classList.remove('show');
+            
+            const usersNavBtn = document.getElementById('usersNavBtn');
+            if(usersNavBtn) usersNavBtn.classList.remove('show');
+            
+            const kpiStatCard = document.getElementById('kpiStatCard');
+            if(kpiStatCard) kpiStatCard.classList.remove('show');
             
             document.querySelectorAll('.card-actions').forEach(el => el.classList.remove('show'));
             document.querySelectorAll('.card-action-btn.kpi').forEach(el => el.classList.remove('show'));
@@ -1709,21 +2911,23 @@
             document.querySelectorAll('.notulen-btn.edit, .notulen-btn.delete').forEach(el => el.classList.remove('show'));
 
             // Jika logout saat di tab KPI / Users, paksa kembali ke Dashboard
-            if (['kpi', 'users'].includes(document.querySelector('.view-section.active')?.id)) {
+            const activeView = document.querySelector('.view-section.active');
+            if (activeView && ['kpi', 'users'].includes(activeView.id)) {
                 showView('dashboard');
             }
             
             sessionStorage.removeItem('gsm_user_role');
             sessionStorage.removeItem('gsm_user_name');
             
-            const activeFilter = document.querySelector('.filter-btn.active');
-            let catFilter = 'all';
-            if(activeFilter && activeFilter.textContent.includes('A.')) catFilter = 'A';
-            if(activeFilter && activeFilter.textContent.includes('B.')) catFilter = 'B';
-            if(activeFilter && activeFilter.textContent.includes('C.')) catFilter = 'C';
-            if(activeFilter && activeFilter.textContent.includes('D.')) catFilter = 'D';
-
-            renderAllPrograms(catFilter);
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            let currentCat = 'all';
+            if (activeFilterBtn) {
+                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
+                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
+                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
+                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
+            }
+            renderAllPrograms(currentCat);
             renderFinanceTable();
             renderMeetings();
         }
@@ -1733,9 +2937,58 @@
             showToast('Logout berhasil', 'success');
         }
 
+        // ==================== VIEW MANAGEMENT (SPA FIX) ====================
+        function showView(viewId, event) {
+            // Cek otoritas
+            if (viewId === 'kpi' && !isAdmin) {
+                showToast('Akses ditolak! Fitur KPI hanya untuk admin/editor.', 'error');
+                return;
+            }
+            if (viewId === 'users' && currentUserRole !== 'admin') {
+                showToast('Akses ditolak! Fitur Users hanya untuk Super Admin.', 'error');
+                return;
+            }
+
+            // Memaksa menyembunyikan semua view section
+            document.querySelectorAll('.view-section').forEach(v => {
+                v.classList.remove('active');
+            });
+            
+            // Menampilkan hanya view target
+            const targetView = document.getElementById(viewId);
+            if(targetView) targetView.classList.add('active');
+            
+            // Memperbarui navigasi tombol
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            } else {
+                const btn = document.querySelector(`.nav-btn[onclick*="${viewId}"]`);
+                if(btn) btn.classList.add('active');
+            }
+            
+            // Render jika perlu
+            if (viewId === 'kpi') {
+                renderKpiDashboard();
+            } else if (viewId === 'users') {
+                renderUsersTable();
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterCategory(category, event) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if(event && event.currentTarget) event.currentTarget.classList.add('active');
+            renderAllPrograms(category);
+        }
+
         // ==================== USERS MANAGEMENT FUNCTIONS ====================
         function renderUsersTable() {
             const tbody = document.getElementById('usersTableBody');
+            if(!tbody) return;
+            
             tbody.innerHTML = usersData.map(u => `
                 <tr>
                     <td><strong>${escapeHtml(u.username)}</strong></td>
@@ -1828,25 +3081,26 @@
         // ==================== RENDER FUNCTIONS ====================
         function updateStats() {
             document.getElementById('totalPrograms').textContent = programsData.length;
-            document.getElementById('totalCategories').textContent = [...new Set(programsData.map(p => p.category))].length;
+            const categories = [...new Set(programsData.map(p => p.category))];
+            document.getElementById('totalCategories').textContent = categories.length;
             document.getElementById('totalNotulen').textContent = notulenData.filter(n => n.status === 'published' || isAdmin).length;
-            document.getElementById('avgKpiScore').textContent = calculateAverageKpi() + '%';
+            
+            const avgScore = calculateAverageKpi();
+            document.getElementById('avgKpiScore').textContent = avgScore + '%';
         }
 
         function calculateAverageKpi() {
             if (programsData.length === 0) return 0;
-            const totalScore = programsData.reduce((sum, p) => sum + (p.kpi ? p.kpi.progress : 0), 0);
+            const totalScore = programsData.reduce((sum, p) => {
+                return sum + (p.kpi ? p.kpi.progress : 0);
+            }, 0);
             return Math.round(totalScore / programsData.length);
         }
 
         function renderFeaturedPrograms() {
-            document.getElementById('featuredPrograms').innerHTML = programsData.slice(0, 4).map(p => createProgramCard(p)).join('');
-        }
-
-        function filterCategory(category, event) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            if(event) event.currentTarget.classList.add('active');
-            renderAllPrograms(category);
+            const container = document.getElementById('featuredPrograms');
+            const featured = programsData.slice(0, 4);
+            container.innerHTML = featured.map(p => createProgramCard(p)).join('');
         }
 
         function createProgramCard(program) {
@@ -1858,10 +3112,22 @@
                         ${isAdmin ? `<button class="card-action-btn kpi show" onclick="openKpiProgramModal(${program.id})"><i class="fas fa-chart-line"></i></button>` : ''}
                     </div>
                     <h4>${escapeHtml(program.title)}</h4>
-                    <div class="program-info"><i class="fas fa-calendar-alt"></i><span><span class="label">Tanggal:</span> ${formatText(program.date)}</span></div>
-                    <div class="program-info"><i class="fas fa-map-marker-alt"></i><span><span class="label">Lokasi:</span> ${formatText(program.location)}</span></div>
-                    <div class="outcome"><h5><i class="fas fa-bullseye"></i> Outcome</h5><p>${formatText(program.outcome)}</p></div>
-                    <div class="impact"><h5><i class="fas fa-heart"></i> Impact</h5><p>${formatText(program.impact)}</p></div>
+                    <div class="program-info">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span><span class="label">Tanggal:</span> ${formatText(program.date)}</span>
+                    </div>
+                    <div class="program-info">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span><span class="label">Lokasi:</span> ${formatText(program.location)}</span>
+                    </div>
+                    <div class="outcome">
+                        <h5><i class="fas fa-bullseye"></i> Outcome</h5>
+                        <p>${formatText(program.outcome)}</p>
+                    </div>
+                    <div class="impact">
+                        <h5><i class="fas fa-heart"></i> Impact</h5>
+                        <p>${formatText(program.impact)}</p>
+                    </div>
                 </div>
             `;
         }
@@ -1869,15 +3135,27 @@
         function renderAllPrograms(category) {
             const container = document.getElementById('allPrograms');
             const filtered = category === 'all' ? programsData : programsData.filter(p => p.category === category);
+            
             const categories = {};
-            filtered.forEach(p => { if (!categories[p.category]) categories[p.category] = []; categories[p.category].push(p); });
+            filtered.forEach(p => {
+                if (!categories[p.category]) {
+                    categories[p.category] = [];
+                }
+                categories[p.category].push(p);
+            });
 
             let html = '';
             for (const [cat, programs] of Object.entries(categories)) {
+                const catInfo = programs[0].catName;
                 html += `
                     <div class="category-section">
-                        <div class="category-header"><div class="cat-badge">${cat}</div><h2>${programs[0].catName}</h2></div>
-                        <div class="program-grid">${programs.map(p => createProgramCard(p)).join('')}</div>
+                        <div class="category-header">
+                            <div class="cat-badge">${cat}</div>
+                            <h2>${catInfo}</h2>
+                        </div>
+                        <div class="program-grid">
+                            ${programs.map(p => createProgramCard(p)).join('')}
+                        </div>
                     </div>
                 `;
             }
@@ -1885,10 +3163,14 @@
         }
 
         function renderFinanceTable() {
-            document.getElementById('financeTable').innerHTML = financeData.map((f, i) => `
+            const tbody = document.getElementById('financeTable');
+            tbody.innerHTML = financeData.map((f, index) => `
                 <tr>
-                    <td>${i + 1}</td><td><strong>${escapeHtml(f.title)}</strong></td>
-                    <td>${formatText(f.outcome)}</td><td>${formatText(f.impact)}</td><td>${formatText(f.execution)}</td>
+                    <td>${index + 1}</td>
+                    <td><strong>${escapeHtml(f.title)}</strong></td>
+                    <td>${formatText(f.outcome)}</td>
+                    <td>${formatText(f.impact)}</td>
+                    <td>${formatText(f.execution)}</td>
                     <td class="admin-only" style="display: ${isAdmin ? 'table-cell' : 'none'}; min-width: 140px;">
                         <button class="btn btn-primary" style="padding: 5px 10px; font-size: 0.8rem; margin-bottom: 5px;" onclick="openEditModal(${f.id}, 'finance')">Edit</button>
                         <button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem;" onclick="deleteItem(${f.id}, 'finance')">Hapus</button>
@@ -1898,7 +3180,8 @@
         }
 
         function renderMeetings() {
-            document.getElementById('meetingsGrid').innerHTML = meetingsData.map(m => {
+            const container = document.getElementById('meetingsGrid');
+            container.innerHTML = meetingsData.map(m => {
                 const hasNotulen = notulenData.some(n => n.meetingId == m.id && n.status === 'published');
                 return `
                     <div class="program-card meeting-with-notulen" onclick="openViewModal(${m.id}, 'meeting')">
@@ -1909,7 +3192,18 @@
                             <button class="card-action-btn upload" onclick="openUploadNotulenModal(${m.id})"><i class="fas fa-upload"></i></button>
                         </div>
                         <h4>${escapeHtml(m.title)}</h4>
-                        <div class="program-info"><i class="fas fa-clock"></i><span><span class="label">Jadwal:</span> ${formatText(m.execution)}</span></div>
+                        <div class="program-info">
+                            <i class="fas fa-bullseye"></i>
+                            <span><span class="label">Outcome:</span> ${formatText(m.outcome)}</span>
+                        </div>
+                        <div class="program-info">
+                            <i class="fas fa-heart"></i>
+                            <span><span class="label">Impact:</span> ${formatText(m.impact)}</span>
+                        </div>
+                        <div class="program-info">
+                            <i class="fas fa-clock"></i>
+                            <span><span class="label">Jadwal:</span> ${formatText(m.execution)}</span>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -1917,65 +3211,73 @@
 
         function renderNotulenList() {
             const container = document.getElementById('notulenList');
-            const pubNotes = notulenData.filter(n => n.status === 'published' || (isAdmin && n.status !== 'draft'));
-            if (pubNotes.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:var(--text-light);"><i class="fas fa-inbox fa-2x"></i><br>Belum ada notulen</p>';
+            const publishedNotulen = notulenData.filter(n => n.status === 'published' || (isAdmin && n.status !== 'draft'));
+
+            if (publishedNotulen.length === 0) {
+                container.innerHTML = `
+                    <p style="text-align: center; color: var(--text-light); padding: 20px;">
+                        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                        Belum ada notulen yang diupload
+                    </p>
+                `;
                 return;
             }
-            container.innerHTML = pubNotes.map(n => `
-                <div class="notulen-item">
-                    <div class="notulen-info">
-                        <h4>${escapeHtml(n.title)} <span class="notulen-status ${n.status}">${n.status}</span></h4>
-                        <p><i class="fas fa-calendar"></i> ${formatDate(n.date)}</p>
-                        <div class="file-info"><i class="fas fa-file"></i> ${escapeHtml(n.fileName || 'file')}</div>
+
+            container.innerHTML = publishedNotulen.map(n => {
+                const statusClass = n.status === 'published' ? 'published' : n.status === 'review' ? 'review' : 'draft';
+                const statusText = n.status === 'published' ? 'Publik' : n.status === 'review' ? 'Review' : 'Draft';
+                const fileSize = n.fileSize ? (n.fileSize / 1024).toFixed(1) + ' KB' : 'N/A';
+                const fileType = n.fileName ? n.fileName.split('.').pop().toUpperCase() : 'FILE';
+
+                return `
+                    <div class="notulen-item">
+                        <div class="notulen-info">
+                            <h4>
+                                ${escapeHtml(n.title)}
+                                <span class="notulen-status ${statusClass}">${statusText}</span>
+                            </h4>
+                            <p><i class="fas fa-calendar"></i> ${formatDate(n.date)}</p>
+                            ${n.description ? `<p><i class="fas fa-align-left"></i> ${formatText(n.description)}</p>` : ''}
+                            <div class="file-info">
+                                <i class="fas fa-file-${fileType === 'PDF' ? 'pdf' : fileType === 'DOC' || fileType === 'DOCX' ? 'word' : 'alt'}"></i>
+                                ${escapeHtml(n.fileName || 'notulen.pdf')} • ${fileSize}
+                            </div>
+                        </div>
+                        <div class="notulen-actions">
+                            <button class="notulen-btn download" onclick="downloadNotulen(${n.id})">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="notulen-btn edit ${isAdmin ? 'show' : ''}" onclick="openEditNotulenModal(${n.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="notulen-btn delete ${isAdmin ? 'show' : ''}" onclick="deleteNotulen(${n.id})">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
+                        </div>
                     </div>
-                    <div class="notulen-actions">
-                        <button class="notulen-btn download" onclick="downloadNotulen(${n.id})"><i class="fas fa-download"></i> Unduh</button>
-                        ${isAdmin ? `<button class="notulen-btn edit show" onclick="openEditNotulenModal(${n.id})"><i class="fas fa-edit"></i> Edit</button>
-                                     <button class="notulen-btn delete show" onclick="deleteNotulen(${n.id})"><i class="fas fa-trash"></i> Hapus</button>` : ''}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        // ==================== KPI & EXPORT FUNCTIONS ====================
-        function getProgressClass(value) {
-            if (value < 50) return 'low';
-            if (value < 80) return 'medium';
-            return 'high';
-        }
-
-        function calculateCompletionRate() {
-            const completed = programsData.filter(p => p.kpi?.status === 'completed').length;
-            return programsData.length > 0 ? Math.round((completed / programsData.length) * 100) : 0;
-        }
-
-        function calculateTimelinessRate() {
-            const onTime = programsData.filter(p => p.kpi?.status !== 'delayed').length;
-            return programsData.length > 0 ? Math.round((onTime / programsData.length) * 100) : 0;
-        }
-
-        function calculateAvgParticipants() {
-            const total = programsData.reduce((sum, p) => sum + (p.kpi?.participants || 0), 0);
-            const active = programsData.filter(p => p.kpi?.participants > 0).length;
-            return active > 0 ? Math.round(total / active) : 0;
-        }
-
-        function calculateAvgQuality() {
-            const total = programsData.reduce((sum, p) => sum + (p.kpi?.quality || 0), 0);
-            const rated = programsData.filter(p => p.kpi?.quality > 0).length;
-            return rated > 0 ? (total / rated).toFixed(1) : 0;
-        }
-
+        // ==================== KPI FUNCTIONS ====================
         function renderKpiDashboard() {
             if (!isAdmin) return;
+            renderKpiCards();
+            renderKpiChart();
+            renderKpiProgramList();
+            renderKpiSummary();
+        }
+
+        function renderKpiCards() {
+            const container = document.getElementById('kpiDashboard');
+            if(!container) return;
             
             const completionRate = calculateCompletionRate();
             const timelinessRate = calculateTimelinessRate();
             const avgParticipants = calculateAvgParticipants();
             const avgQuality = calculateAvgQuality();
             
-            document.getElementById('kpiDashboard').innerHTML = `
+            container.innerHTML = `
                 <div class="kpi-card">
                     <div class="kpi-card-header">
                         <h3>Tingkat Penyelesaian</h3>
@@ -2040,13 +3342,40 @@
                     </div>
                 </div>
             `;
-            renderKpiChart();
-            renderKpiProgramList();
-            renderKpiSummary();
+        }
+
+        function getProgressClass(value) {
+            if (value < 50) return 'low';
+            if (value < 80) return 'medium';
+            return 'high';
+        }
+
+        function calculateCompletionRate() {
+            const completed = programsData.filter(p => p.kpi?.status === 'completed').length;
+            return programsData.length > 0 ? Math.round((completed / programsData.length) * 100) : 0;
+        }
+
+        function calculateTimelinessRate() {
+            const onTime = programsData.filter(p => p.kpi?.status !== 'delayed').length;
+            return programsData.length > 0 ? Math.round((onTime / programsData.length) * 100) : 0;
+        }
+
+        function calculateAvgParticipants() {
+            const total = programsData.reduce((sum, p) => sum + (p.kpi?.participants || 0), 0);
+            const active = programsData.filter(p => p.kpi?.participants > 0).length;
+            return active > 0 ? Math.round(total / active) : 0;
+        }
+
+        function calculateAvgQuality() {
+            const total = programsData.reduce((sum, p) => sum + (p.kpi?.quality || 0), 0);
+            const rated = programsData.filter(p => p.kpi?.quality > 0).length;
+            return rated > 0 ? (total / rated).toFixed(1) : 0;
         }
 
         function renderKpiChart() {
             const container = document.getElementById('kpiChart');
+            if(!container) return;
+            
             const categories = ['A', 'B', 'C', 'D'];
             const categoryNames = {'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik'};
             
@@ -2074,6 +3403,7 @@
 
         function renderKpiProgramList() {
             const container = document.getElementById('kpiProgramList');
+            if(!container) return;
             
             container.innerHTML = programsData.map(p => {
                 const statusClass = p.kpi?.status || 'not-started';
@@ -2107,6 +3437,7 @@
 
         function renderKpiSummary() {
             const container = document.getElementById('kpiSummary');
+            if(!container) return;
             
             const completed = programsData.filter(p => p.kpi?.status === 'completed').length;
             const inProgress = programsData.filter(p => p.kpi?.status === 'in-progress').length;
@@ -2137,17 +3468,24 @@
             `;
         }
 
-        function refreshKpiData() { 
-            renderKpiDashboard(); 
-            showToast('Data KPI diperbarui', 'info'); 
+        function refreshKpiData() {
+            renderKpiDashboard();
+            showToast('Data KPI berhasil diperbarui!', 'info');
         }
 
+        // ==================== EXPORT FUNCTIONS ====================
+        
         async function exportKpiPDF() {
-            if (!isAdmin) { showToast('Anda harus login!', 'error'); return; }
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin/editor!', 'error');
+                return;
+            }
 
             showToast('Sedang membuat PDF, mohon tunggu...', 'info');
+            
             const kpiElement = document.getElementById('kpi');
             
+            // Sembunyikan tombol-tombol sementara agar tidak ikut ter-print di PDF
             const buttons = kpiElement.querySelectorAll('button');
             const originalDisplays = [];
             buttons.forEach((btn, index) => {
@@ -2156,9 +3494,10 @@
             });
 
             try {
+                // Render elemen HTML menjadi Canvas (mencakup grafik warna-warni)
                 const canvas = await html2canvas(kpiElement, {
                     scale: 2,
-                    backgroundColor: '#F5F7FA', 
+                    backgroundColor: '#F5F7FA', // Sesuaikan dengan warna background aplikasi
                     logging: false
                 });
 
@@ -2172,9 +3511,11 @@
                 let heightLeft = imgHeight;
                 let position = 0;
 
+                // Tambahkan gambar pertama
                 doc.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
                 heightLeft -= pageHeight;
 
+                // Jika konten lebih panjang dari 1 halaman, buat halaman baru
                 while (heightLeft >= 0) {
                     position = heightLeft - imgHeight;
                     doc.addPage();
@@ -2188,6 +3529,7 @@
                 console.error('PDF Error:', error);
                 showToast('Gagal membuat PDF!', 'error');
             } finally {
+                // Kembalikan tampilan tombol
                 buttons.forEach((btn, index) => {
                     btn.style.display = originalDisplays[index];
                 });
@@ -2195,10 +3537,14 @@
         }
 
         function exportKpiExcel() {
-            if (!isAdmin) { showToast('Anda harus login!', 'error'); return; }
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin/editor!', 'error');
+                return;
+            }
 
             const wb = XLSX.utils.book_new();
 
+            // 1. DATA RINGKASAN
             const summaryData = [
                 ["LAPORAN KPI GURU SEKOLAH MINGGU 2026"],
                 ["Tanggal Export:", new Date().toLocaleString('id-ID')],
@@ -2224,9 +3570,12 @@
             });
 
             const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+            
+            // Atur lebar kolom untuk Sheet Ringkasan
             wsSummary['!cols'] = [{ wch: 30 }, { wch: 15 }];
             XLSX.utils.book_append_sheet(wb, wsSummary, "Ringkasan KPI");
 
+            // 2. DATA DETAIL PER PROGRAM
             const programData = programsData.map((p, index) => {
                 const statusText = {
                     'not-started': 'Belum Dimulai',
@@ -2249,6 +3598,8 @@
             });
 
             const wsPrograms = XLSX.utils.json_to_sheet(programData);
+            
+            // Atur lebar kolom untuk Sheet Detail
             wsPrograms['!cols'] = [
                 { wch: 5 }, { wch: 12 }, { wch: 40 }, { wch: 15 }, 
                 { wch: 12 }, { wch: 25 }, { wch: 18 }, { wch: 18 }, { wch: 40 }
@@ -2256,13 +3607,296 @@
             
             XLSX.utils.book_append_sheet(wb, wsPrograms, "Detail Program");
 
+            // Proses Download
             XLSX.writeFile(wb, `Data_KPI_GSM_${new Date().toISOString().split('T')[0]}.xlsx`);
             showToast('Laporan Excel berhasil diunduh!', 'success');
         }
 
-        // ==================== MODALS & CRUD FUNCTIONS ====================
+        // ==================== NOTULEN FUNCTIONS ====================
+        function openUploadNotulenModal(meetingId = null) {
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            document.getElementById('uploadNotulenForm').reset();
+            document.getElementById('notulenId').value = '';
+            document.getElementById('selectedFileName').textContent = '';
+            selectedFile = null;
+
+            const meetingSelect = document.getElementById('notulenMeetingId');
+            if (meetingSelect) {
+                meetingSelect.innerHTML = '<option value="">-- Pilih Rapat Terkait --</option>';
+                meetingsData.forEach(m => {
+                    const option = document.createElement('option');
+                    option.value = m.id;
+                    option.textContent = m.title;
+                    if (meetingId && m.id == meetingId) {
+                        option.selected = true;
+                    }
+                    meetingSelect.appendChild(option);
+                });
+            }
+
+            document.getElementById('uploadNotulenModal').style.display = 'flex';
+        }
+
+        function closeUploadNotulenModal() {
+            document.getElementById('uploadNotulenModal').style.display = 'none';
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('Ukuran file maksimal 2MB!', 'error');
+                    event.target.value = '';
+                    selectedFile = null;
+                    document.getElementById('selectedFileName').textContent = '';
+                    return;
+                }
+
+                selectedFile = file;
+                document.getElementById('selectedFileName').textContent = `📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            }
+        }
+
+        function handleEditFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('Ukuran file maksimal 2MB!', 'error');
+                    event.target.value = '';
+                    editSelectedFile = null;
+                    document.getElementById('editSelectedFileName').textContent = '';
+                    return;
+                }
+
+                editSelectedFile = file;
+                document.getElementById('editSelectedFileName').textContent = `📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            }
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        document.getElementById('uploadNotulenForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            if (!selectedFile) {
+                showToast('Silakan upload file notulen!', 'error');
+                return;
+            }
+
+            try {
+                const base64File = await fileToBase64(selectedFile);
+                
+                const newNotulen = {
+                    id: Date.now(),
+                    title: document.getElementById('notulenTitle').value,
+                    date: document.getElementById('notulenDate').value,
+                    meetingId: document.getElementById('notulenMeetingId').value,
+                    description: document.getElementById('notulenDescription').value,
+                    fileName: selectedFile.name,
+                    fileType: selectedFile.type,
+                    fileSize: selectedFile.size,
+                    fileData: base64File,
+                    status: document.getElementById('notulenStatus').value,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                notulenData.push(newNotulen);
+                
+                if (saveData()) {
+                    closeUploadNotulenModal();
+                    showToast('Notulen berhasil diupload!', 'success');
+                    renderNotulenList();
+                    renderMeetings();
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast('Gagal upload notulen!', 'error');
+            }
+        });
+
+        function openEditNotulenModal(id) {
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            const parsedId = Number(id);
+            const notulen = notulenData.find(n => n.id === parsedId);
+            if (!notulen) return;
+
+            document.getElementById('editNotulenId').value = notulen.id;
+            document.getElementById('editNotulenTitle').value = notulen.title;
+            document.getElementById('editNotulenDate').value = notulen.date;
+            document.getElementById('editNotulenDescription').value = notulen.description || '';
+            document.getElementById('currentFileName').textContent = `📄 ${notulen.fileName || 'notulen.pdf'} (${(notulen.fileSize / 1024).toFixed(1)} KB)`;
+            document.getElementById('editNotulenStatus').value = notulen.status;
+            document.getElementById('editSelectedFileName').textContent = '';
+            editSelectedFile = null;
+
+            document.getElementById('editNotulenModal').style.display = 'flex';
+        }
+
+        function closeEditNotulenModal() {
+            document.getElementById('editNotulenModal').style.display = 'none';
+        }
+
+        document.getElementById('editNotulenForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            const id = parseInt(document.getElementById('editNotulenId').value);
+            const index = notulenData.findIndex(n => n.id === id);
+
+            if (index === -1) return;
+
+            try {
+                let fileData = notulenData[index].fileData;
+                let fileName = notulenData[index].fileName;
+                let fileType = notulenData[index].fileType;
+                let fileSize = notulenData[index].fileSize;
+
+                if (editSelectedFile) {
+                    fileData = await fileToBase64(editSelectedFile);
+                    fileName = editSelectedFile.name;
+                    fileType = editSelectedFile.type;
+                    fileSize = editSelectedFile.size;
+                }
+
+                notulenData[index] = {
+                    ...notulenData[index],
+                    title: document.getElementById('editNotulenTitle').value,
+                    date: document.getElementById('editNotulenDate').value,
+                    description: document.getElementById('editNotulenDescription').value,
+                    fileName: fileName,
+                    fileType: fileType,
+                    fileSize: fileSize,
+                    fileData: fileData,
+                    status: document.getElementById('editNotulenStatus').value,
+                    updatedAt: new Date().toISOString()
+                };
+
+                if (saveData()) {
+                    closeEditNotulenModal();
+                    showToast('Notulen berhasil diperbarui!', 'success');
+                    renderNotulenList();
+                    renderMeetings();
+                }
+            } catch (error) {
+                console.error('Edit error:', error);
+                showToast('Gagal memperbarui notulen!', 'error');
+            }
+        });
+
+        function downloadNotulen(id) {
+            const parsedId = Number(id);
+            const notulen = notulenData.find(n => n.id === parsedId);
+            if (!notulen) return;
+
+            if (notulen.status !== 'published' && !isAdmin) {
+                showToast('Notulen ini belum tersedia untuk publik', 'error');
+                return;
+            }
+
+            try {
+                const linkSource = notulen.fileData;
+                const downloadLink = document.createElement('a');
+                const fileName = notulen.fileName || 'notulen.pdf';
+                
+                downloadLink.href = linkSource;
+                downloadLink.download = fileName;
+                downloadLink.click();
+                
+                showToast('Download dimulai!', 'info');
+            } catch (error) {
+                console.error('Download error:', error);
+                showToast('Gagal download notulen!', 'error');
+            }
+        }
+
+        function deleteNotulen(id) {
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            if (!confirm('Apakah Anda yakin ingin menghapus notulen ini?')) return;
+
+            const parsedId = Number(id);
+            const index = notulenData.findIndex(n => n.id === parsedId);
+            if (index !== -1) {
+                notulenData.splice(index, 1);
+                saveData();
+                showToast('Notulen berhasil dihapus!', 'success');
+                renderNotulenList();
+                renderMeetings();
+            }
+        }
+
+        // ==================== MODAL FUNCTIONS ====================
+        function openViewModal(id, type) {
+            const parsedId = Number(id);
+            let item;
+            if (type === 'program') {
+                item = programsData.find(p => p.id === parsedId);
+            } else if (type === 'finance') {
+                item = financeData.find(f => f.id === parsedId);
+            } else {
+                item = meetingsData.find(m => m.id === parsedId);
+            }
+
+            if (!item) return;
+
+            const titleEl = document.getElementById('viewModalTitle');
+            const dateEl = document.getElementById('viewModalDate');
+            const locEl = document.getElementById('viewModalLocation');
+            const outcomeEl = document.getElementById('viewModalOutcome');
+            const impactEl = document.getElementById('viewModalImpact');
+            const methodEl = document.getElementById('viewModalMethod');
+            const modalEl = document.getElementById('viewModal');
+
+            if(titleEl) titleEl.textContent = item.title;
+            if(dateEl) dateEl.innerHTML = formatText(item.date || item.execution || '-');
+            if(locEl) locEl.innerHTML = formatText(item.location || '-');
+            if(outcomeEl) outcomeEl.innerHTML = formatText(item.outcome);
+            if(impactEl) impactEl.innerHTML = formatText(item.impact);
+            if(methodEl) methodEl.innerHTML = formatText(item.method || item.execution || '-');
+            
+            if(modalEl) modalEl.style.display = 'flex';
+        }
+
+        function closeViewModal(event) {
+            if (event.target.id === 'viewModal') {
+                document.getElementById('viewModal').style.display = 'none';
+            }
+        }
+
+        function closeViewModalDirect() {
+            const modal = document.getElementById('viewModal');
+            if (modal) modal.style.display = 'none';
+        }
+
         function openAddModal(type) {
-            if(!isAdmin) return showToast('Harus login!', 'error');
             document.getElementById('editId').value = '';
             document.getElementById('editType').value = type;
             document.getElementById('editModalTitle').textContent = 'Tambah ' + (type === 'program' ? 'Program' : type === 'finance' ? 'Keuangan' : 'Rapat');
@@ -2277,26 +3911,41 @@
                 document.getElementById('groupLocation').style.display = 'none';
                 document.getElementById('groupMethod').style.display = 'none';
             }
-            
+
             document.getElementById('editModal').style.display = 'flex';
         }
 
         function openEditModal(id, type) {
-            if(!isAdmin) return showToast('Harus login!', 'error');
-            const list = type === 'program' ? programsData : type === 'finance' ? financeData : meetingsData;
-            const item = list.find(x => x.id === id);
-            if(!item) return;
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            const parsedId = Number(id);
+            let item;
+            if (type === 'program') {
+                item = programsData.find(p => p.id === parsedId);
+            } else if (type === 'finance') {
+                item = financeData.find(f => f.id === parsedId);
+            } else {
+                item = meetingsData.find(m => m.id === parsedId);
+            }
+
+            if (!item) return;
+
             document.getElementById('editId').value = item.id;
             document.getElementById('editType').value = type;
+            document.getElementById('editModalTitle').textContent = 'Edit ' + (type === 'program' ? 'Program' : type === 'finance' ? 'Keuangan' : 'Rapat');
+            
             document.getElementById('editTitle').value = item.title;
             document.getElementById('editOutcome').value = item.outcome;
             document.getElementById('editImpact').value = item.impact;
-            document.getElementById('editModalTitle').textContent = 'Edit ' + (type === 'program' ? 'Program' : type === 'finance' ? 'Keuangan' : 'Rapat');
             
             if (type === 'program') {
                 document.getElementById('groupCategory').style.display = 'block';
                 document.getElementById('groupLocation').style.display = 'block';
                 document.getElementById('groupMethod').style.display = 'block';
+                
                 document.getElementById('editCategory').value = item.category || 'A';
                 document.getElementById('editDate').value = item.date || '';
                 document.getElementById('editLocation').value = item.location || '';
@@ -2305,129 +3954,225 @@
                 document.getElementById('groupCategory').style.display = 'none';
                 document.getElementById('groupLocation').style.display = 'none';
                 document.getElementById('groupMethod').style.display = 'none';
+                
                 document.getElementById('editDate').value = item.execution || '';
             }
-            
+
             document.getElementById('editModal').style.display = 'flex';
         }
 
-        function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
-        
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            if(!isAdmin) return;
-            const id = Number(document.getElementById('editId').value) || Date.now();
-            const type = document.getElementById('editType').value;
-            const obj = {
-                id: id,
-                title: document.getElementById('editTitle').value,
-                outcome: document.getElementById('editOutcome').value,
-                impact: document.getElementById('editImpact').value,
-            };
-            
-            if (type === 'program') {
-                obj.category = document.getElementById('editCategory').value;
-                const mapCat = { 'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik', 'E': 'Keuangan', 'F': 'Rapat' };
-                obj.catName = mapCat[obj.category] || 'Lainnya';
-                obj.date = document.getElementById('editDate').value;
-                obj.location = document.getElementById('editLocation').value;
-                obj.method = document.getElementById('editMethod').value;
-                const idx = programsData.findIndex(x => x.id === id);
-                if(idx > -1) programsData[idx] = {...programsData[idx], ...obj}; 
-                else { obj.kpi = { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }; programsData.push(obj); }
-            } else if (type === 'finance') {
-                obj.execution = document.getElementById('editDate').value;
-                const idx = financeData.findIndex(x => x.id === id);
-                if(idx > -1) financeData[idx] = {...financeData[idx], ...obj}; else financeData.push(obj);
-            } else {
-                obj.execution = document.getElementById('editDate').value;
-                const idx = meetingsData.findIndex(x => x.id === id);
-                if(idx > -1) meetingsData[idx] = {...meetingsData[idx], ...obj}; else meetingsData.push(obj);
-            }
-            saveData();
-            showToast('Data berhasil disimpan!', 'success');
-            
-            const activeFilter = document.querySelector('.filter-btn.active');
-            let catFilter = 'all';
-            if(activeFilter && activeFilter.textContent.includes('A.')) catFilter = 'A';
-            if(activeFilter && activeFilter.textContent.includes('B.')) catFilter = 'B';
-            if(activeFilter && activeFilter.textContent.includes('C.')) catFilter = 'C';
-            if(activeFilter && activeFilter.textContent.includes('D.')) catFilter = 'D';
 
-            renderAllPrograms(catFilter);
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            const idStr = document.getElementById('editId').value;
+            const type = document.getElementById('editType').value;
+            const title = document.getElementById('editTitle').value;
+            const outcome = document.getElementById('editOutcome').value;
+            const impact = document.getElementById('editImpact').value;
+
+            if (idStr) {
+                const parsedId = Number(idStr);
+                if (type === 'program') {
+                    const category = document.getElementById('editCategory').value;
+                    const date = document.getElementById('editDate').value;
+                    const location = document.getElementById('editLocation').value;
+                    const method = document.getElementById('editMethod').value;
+                    
+                    const index = programsData.findIndex(p => p.id === parsedId);
+                    if (index !== -1) {
+                        const mapCat = { 'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik', 'E': 'Keuangan', 'F': 'Rapat' };
+                        programsData[index] = { ...programsData[index], title, category, catName: mapCat[category] || 'Lainnya', date, location, outcome, impact, method };
+                    }
+                } else if (type === 'finance') {
+                    const execution = document.getElementById('editDate').value;
+                    const index = financeData.findIndex(f => f.id === parsedId);
+                    if (index !== -1) {
+                        financeData[index] = { ...financeData[index], title, outcome, impact, execution };
+                    }
+                } else {
+                    const execution = document.getElementById('editDate').value;
+                    const index = meetingsData.findIndex(m => m.id === parsedId);
+                    if (index !== -1) {
+                        meetingsData[index] = { ...meetingsData[index], title, outcome, impact, execution };
+                    }
+                }
+                showToast('Data berhasil diperbarui!', 'success');
+            } else {
+                const newId = Date.now();
+                if (type === 'program') {
+                    const category = document.getElementById('editCategory').value;
+                    const date = document.getElementById('editDate').value;
+                    const location = document.getElementById('editLocation').value;
+                    const method = document.getElementById('editMethod').value;
+                    
+                    const catNames = { 'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik', 'E': 'Keuangan', 'F': 'Rapat' };
+                    programsData.push({
+                        id: newId,
+                        category,
+                        catName: catNames[category] || 'Lainnya',
+                        title,
+                        date,
+                        location,
+                        outcome,
+                        impact,
+                        method,
+                        kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
+                    });
+                } else if (type === 'finance') {
+                    const execution = document.getElementById('editDate').value;
+                    financeData.push({
+                        id: newId,
+                        title,
+                        outcome,
+                        impact,
+                        execution
+                    });
+                } else {
+                    const execution = document.getElementById('editDate').value;
+                    meetingsData.push({
+                        id: newId,
+                        title,
+                        outcome,
+                        impact,
+                        execution
+                    });
+                }
+                showToast('Data berhasil ditambahkan!', 'success');
+            }
+
+            saveData();
+            
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            let currentCat = 'all';
+            if (activeFilterBtn) {
+                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
+                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
+                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
+                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
+            }
+            renderAllPrograms(currentCat);
             renderFinanceTable();
             renderMeetings();
+            
             closeEditModal();
         });
 
         function deleteItem(id, type) {
-            if(!isAdmin) return showToast('Harus login!', 'error');
-            if(!confirm('Hapus item ini?')) return;
-            if (type === 'program') programsData = programsData.filter(x => x.id !== id);
-            if (type === 'finance') financeData = financeData.filter(x => x.id !== id);
-            if (type === 'meeting') meetingsData = meetingsData.filter(x => x.id !== id);
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            if (!confirm('Apakah Anda yakin ingin menghapus item ini?')) return;
+
+            const parsedId = Number(id);
+            if (type === 'program') {
+                programsData = programsData.filter(p => p.id !== parsedId);
+            } else if (type === 'finance') {
+                financeData = financeData.filter(f => f.id !== parsedId);
+            } else {
+                meetingsData = meetingsData.filter(m => m.id !== parsedId);
+            }
+
             saveData();
             
-            const activeFilter = document.querySelector('.filter-btn.active');
-            let catFilter = 'all';
-            if(activeFilter && activeFilter.textContent.includes('A.')) catFilter = 'A';
-            if(activeFilter && activeFilter.textContent.includes('B.')) catFilter = 'B';
-            if(activeFilter && activeFilter.textContent.includes('C.')) catFilter = 'C';
-            if(activeFilter && activeFilter.textContent.includes('D.')) catFilter = 'D';
-
-            renderAllPrograms(catFilter);
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            let currentCat = 'all';
+            if (activeFilterBtn) {
+                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
+                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
+                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
+                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
+            }
+            renderAllPrograms(currentCat);
             renderFinanceTable();
             renderMeetings();
-            showToast('Item berhasil dihapus', 'success');
+            
+            showToast('Item berhasil dihapus!', 'success');
         }
 
         // ==================== KPI PROGRESS MODAL ====================
         function openKpiProgramModal(id) {
-            if(!isAdmin) return;
-            const program = programsData.find(x => x.id === id);
-            if(!program) return;
-            document.getElementById('kpiProgramId').value = id;
-            document.getElementById('kpiProgramName').innerText = program.title;
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            const parsedId = Number(id);
+            const program = programsData.find(p => p.id === parsedId);
+            if (!program) return;
+
+            document.getElementById('kpiProgramId').value = program.id;
+            document.getElementById('kpiProgramName').textContent = program.title;
             document.getElementById('kpiProgramStatus').value = program.kpi?.status || 'not-started';
             document.getElementById('kpiProgramProgress').value = program.kpi?.progress || 0;
             document.getElementById('kpiProgramParticipants').value = program.kpi?.participants || 0;
             document.getElementById('kpiProgramQuality').value = program.kpi?.quality || 5;
             document.getElementById('kpiProgramNotes').value = program.kpi?.notes || '';
+
             document.getElementById('kpiProgramModal').style.display = 'flex';
         }
-        function closeKpiProgramModal() { document.getElementById('kpiProgramModal').style.display = 'none'; }
-        
+
+        function closeKpiProgramModal() {
+            document.getElementById('kpiProgramModal').style.display = 'none';
+        }
+
         document.getElementById('kpiProgramForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            if(!isAdmin) return;
-            const id = Number(document.getElementById('kpiProgramId').value);
-            const p = programsData.find(x => x.id === id);
-            if(p) {
-                p.kpi = {
-                    status: document.getElementById('kpiProgramStatus').value,
-                    progress: Number(document.getElementById('kpiProgramProgress').value),
-                    participants: Number(document.getElementById('kpiProgramParticipants').value),
-                    quality: Number(document.getElementById('kpiProgramQuality').value),
-                    notes: document.getElementById('kpiProgramNotes').value
-                };
-                saveData();
-                closeKpiProgramModal();
-                showToast('Progress KPI berhasil disimpan!', 'success');
-                if(document.getElementById('kpi').classList.contains('active')) renderKpiDashboard();
-                
-                const activeFilter = document.querySelector('.filter-btn.active');
-                let catFilter = 'all';
-                if(activeFilter && activeFilter.textContent.includes('A.')) catFilter = 'A';
-                if(activeFilter && activeFilter.textContent.includes('B.')) catFilter = 'B';
-                if(activeFilter && activeFilter.textContent.includes('C.')) catFilter = 'C';
-                if(activeFilter && activeFilter.textContent.includes('D.')) catFilter = 'D';
-                renderAllPrograms(catFilter);
+
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
             }
+
+            const id = parseInt(document.getElementById('kpiProgramId').value);
+            const index = programsData.findIndex(p => p.id === id);
+
+            if (index === -1) return;
+
+            programsData[index].kpi = {
+                status: document.getElementById('kpiProgramStatus').value,
+                progress: parseInt(document.getElementById('kpiProgramProgress').value),
+                participants: parseInt(document.getElementById('kpiProgramParticipants').value),
+                quality: parseInt(document.getElementById('kpiProgramQuality').value),
+                notes: document.getElementById('kpiProgramNotes').value
+            };
+
+            saveData();
+            
+            closeKpiProgramModal();
+            showToast('Progress KPI berhasil diperbarui!', 'success');
+            
+            const kpiElement = document.getElementById('kpi');
+            if (kpiElement && kpiElement.classList.contains('active')) renderKpiDashboard();
+            
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            let currentCat = 'all';
+            if (activeFilterBtn) {
+                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
+                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
+                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
+                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
+            }
+            renderAllPrograms(currentCat);
         });
 
         // ==================== KPI SETTINGS MODAL ====================
         function openKpiSettingsModal() {
-            if (currentUserRole !== 'admin') return showToast('Hanya Admin!', 'error');
+            if (currentUserRole !== 'admin') {
+                showToast('Hanya Super Admin yang dapat mengakses ini!', 'error');
+                return;
+            }
+
             document.getElementById('kpiTargetCompletion').value = kpiSettings.targetCompletion;
             document.getElementById('kpiTargetTimeliness').value = kpiSettings.targetTimeliness;
             document.getElementById('kpiTargetParticipation').value = kpiSettings.targetParticipation;
@@ -2436,19 +4181,28 @@
             document.getElementById('kpiWeightTimeliness').value = kpiSettings.weights.timeliness;
             document.getElementById('kpiWeightParticipation').value = kpiSettings.weights.participation;
             document.getElementById('kpiWeightQuality').value = kpiSettings.weights.quality;
+
             document.getElementById('kpiSettingsModal').style.display = 'flex';
         }
-        function closeKpiSettingsModal() { document.getElementById('kpiSettingsModal').style.display = 'none'; }
-        
+
+        function closeKpiSettingsModal() {
+            document.getElementById('kpiSettingsModal').style.display = 'none';
+        }
+
         document.getElementById('kpiSettingsForm').addEventListener('submit', function(e) {
             e.preventDefault();
+
             if (currentUserRole !== 'admin') return;
+
             const totalWeight = parseInt(document.getElementById('kpiWeightCompletion').value) +
                                parseInt(document.getElementById('kpiWeightTimeliness').value) +
                                parseInt(document.getElementById('kpiWeightParticipation').value) +
                                parseInt(document.getElementById('kpiWeightQuality').value);
 
-            if (totalWeight !== 100) return showToast('Total bobot harus 100%!', 'error');
+            if (totalWeight !== 100) {
+                showToast('Total bobot harus 100%!', 'error');
+                return;
+            }
 
             kpiSettings = {
                 targetCompletion: parseInt(document.getElementById('kpiTargetCompletion').value),
@@ -2462,195 +4216,58 @@
                     quality: parseInt(document.getElementById('kpiWeightQuality').value)
                 }
             };
+
             saveData();
             closeKpiSettingsModal();
-            showToast('Pengaturan KPI disimpan!', 'success');
-            if(document.getElementById('kpi').classList.contains('active')) renderKpiDashboard();
-        });
-
-        // ==================== NOTULEN MODALS ====================
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if (file.size > 2 * 1024 * 1024) {
-                    showToast('Ukuran maksimal 2MB!', 'error');
-                    event.target.value = ''; selectedFile = null;
-                    document.getElementById('selectedFileName').textContent = '';
-                    return;
-                }
-                selectedFile = file;
-                document.getElementById('selectedFileName').textContent = `📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-            }
-        }
-        function handleEditFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if (file.size > 2 * 1024 * 1024) {
-                    showToast('Ukuran maksimal 2MB!', 'error');
-                    event.target.value = ''; editSelectedFile = null;
-                    document.getElementById('editSelectedFileName').textContent = '';
-                    return;
-                }
-                editSelectedFile = file;
-                document.getElementById('editSelectedFileName').textContent = `📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-            }
-        }
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        }
-
-        function openUploadNotulenModal(meetingId = null) {
-            if(!isAdmin) return;
-            document.getElementById('uploadNotulenForm').reset();
-            document.getElementById('notulenId').value = '';
-            document.getElementById('selectedFileName').textContent = '';
-            selectedFile = null;
-            const select = document.getElementById('notulenMeetingId');
-            select.innerHTML = '<option value="">-- Pilih Rapat Terkait --</option>';
-            meetingsData.forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m.id; opt.textContent = m.title;
-                if (meetingId && m.id == meetingId) opt.selected = true;
-                select.appendChild(opt);
-            });
-            document.getElementById('uploadNotulenModal').style.display = 'flex';
-        }
-        function closeUploadNotulenModal() { document.getElementById('uploadNotulenModal').style.display = 'none'; }
-        
-        document.getElementById('uploadNotulenForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            if(!isAdmin) return;
-            if(!selectedFile) return showToast('Pilih file notulen!', 'error');
-
-            try {
-                const base64 = await fileToBase64(selectedFile);
-                notulenData.push({
-                    id: Date.now(),
-                    title: document.getElementById('notulenTitle').value,
-                    date: document.getElementById('notulenDate').value,
-                    meetingId: document.getElementById('notulenMeetingId').value,
-                    description: document.getElementById('notulenDescription').value,
-                    fileName: selectedFile.name,
-                    fileType: selectedFile.type,
-                    fileSize: selectedFile.size,
-                    fileData: base64,
-                    status: document.getElementById('notulenStatus').value,
-                    createdAt: new Date().toISOString()
-                });
-                if(saveData()) {
-                    closeUploadNotulenModal();
-                    showToast('Notulen berhasil diupload!', 'success');
-                    renderNotulenList();
-                    renderMeetings();
-                }
-            } catch (error) { showToast('Gagal upload notulen!', 'error'); }
-        });
-
-        function openEditNotulenModal(id) {
-            if(!isAdmin) return;
-            const notulen = notulenData.find(n => n.id === id);
-            if(!notulen) return;
-            document.getElementById('editNotulenId').value = notulen.id;
-            document.getElementById('editNotulenTitle').value = notulen.title;
-            document.getElementById('editNotulenDate').value = notulen.date;
-            document.getElementById('editNotulenDescription').value = notulen.description || '';
-            document.getElementById('currentFileName').textContent = `📄 ${notulen.fileName || 'notulen.pdf'} (${(notulen.fileSize / 1024).toFixed(1)} KB)`;
-            document.getElementById('editNotulenStatus').value = notulen.status;
-            document.getElementById('editSelectedFileName').textContent = '';
-            editSelectedFile = null;
-            document.getElementById('editNotulenModal').style.display = 'flex';
-        }
-        function closeEditNotulenModal() { document.getElementById('editNotulenModal').style.display = 'none'; }
-
-        document.getElementById('editNotulenForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            if(!isAdmin) return;
-            const id = parseInt(document.getElementById('editNotulenId').value);
-            const idx = notulenData.findIndex(n => n.id === id);
-            if(idx === -1) return;
-
-            try {
-                let fData = notulenData[idx].fileData, fName = notulenData[idx].fileName, fType = notulenData[idx].fileType, fSize = notulenData[idx].fileSize;
-                if(editSelectedFile) {
-                    fData = await fileToBase64(editSelectedFile);
-                    fName = editSelectedFile.name; fType = editSelectedFile.type; fSize = editSelectedFile.size;
-                }
-                notulenData[idx] = {
-                    ...notulenData[idx],
-                    title: document.getElementById('editNotulenTitle').value,
-                    date: document.getElementById('editNotulenDate').value,
-                    description: document.getElementById('editNotulenDescription').value,
-                    status: document.getElementById('editNotulenStatus').value,
-                    fileName: fName, fileType: fType, fileSize: fSize, fileData: fData
-                };
-                if(saveData()) {
-                    closeEditNotulenModal();
-                    showToast('Notulen berhasil diperbarui!', 'success');
-                    renderNotulenList();
-                    renderMeetings();
-                }
-            } catch(e) { showToast('Gagal edit notulen!', 'error'); }
-        });
-
-        function deleteNotulen(id) { 
-            if(!isAdmin) return; 
-            if(confirm('Hapus notulen ini?')){ 
-                notulenData = notulenData.filter(n => n.id !== id); 
-                saveData(); 
-                renderNotulenList();
-                renderMeetings();
-                showToast('Notulen dihapus!', 'success');
-            } 
-        }
-
-        function downloadNotulen(id) {
-            const notulen = notulenData.find(n => n.id === id);
-            if(!notulen) return;
-            if(notulen.status !== 'published' && !isAdmin) return showToast('Belum tersedia untuk publik', 'error');
+            showToast('Pengaturan KPI berhasil disimpan!', 'success');
             
-            const link = document.createElement('a');
-            link.href = notulen.fileData;
-            link.download = notulen.fileName || 'notulen.pdf';
-            link.click();
-            showToast('Download dimulai!', 'info');
+            const kpiElement = document.getElementById('kpi');
+            if (kpiElement && kpiElement.classList.contains('active')) renderKpiDashboard();
+        });
+
+        // ==================== LOGIN FUNCTIONS ====================
+        function openLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) modal.style.display = 'flex';
         }
 
-        function openViewModal(id, type) {
-            const list = type === 'program' ? programsData : type === 'finance' ? financeData : meetingsData;
-            const item = list.find(x => x.id === id);
-            if(!item) return;
-            document.getElementById('viewModalTitle').textContent = item.title;
-            document.getElementById('viewModalDate').innerHTML = formatText(item.date || item.execution || '-');
-            document.getElementById('viewModalLocation').innerHTML = formatText(item.location || '-');
-            document.getElementById('viewModalOutcome').innerHTML = formatText(item.outcome);
-            document.getElementById('viewModalImpact').innerHTML = formatText(item.impact);
-            document.getElementById('viewModalMethod').innerHTML = formatText(item.method || item.execution || '-');
-            document.getElementById('viewModal').style.display = 'flex';
-        }
-        
-        function closeViewModalDirect() { document.getElementById('viewModal').style.display='none'; }
-        function closeViewModal(e) { if(e.target.id==='viewModal') closeViewModalDirect(); }
-        function openLoginModal() { document.getElementById('loginModal').style.display='flex'; }
-        function closeLoginModal() { document.getElementById('loginModal').style.display='none'; }
-        
-        function formatDate(dateString) { return new Date(dateString).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }); }
-        function showToast(msg, type='success') {
-            const t = document.getElementById('toast');
-            t.textContent = msg; t.className = 'toast show ' + type;
-            setTimeout(() => t.classList.remove('show'), 3000);
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) modal.style.display = 'none';
         }
 
-        window.addEventListener('keydown', e => {
+        // ==================== UTILITY FUNCTIONS ====================
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+                closeViewModalDirect();
+                closeEditModal();
+                closeUploadNotulenModal();
+                closeEditNotulenModal();
+                closeKpiSettingsModal();
+                closeKpiProgramModal();
+                closeUserModal();
+                closeLoginModal();
             }
         });
 
+        // Initialize on load
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
