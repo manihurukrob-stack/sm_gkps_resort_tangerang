@@ -531,13 +531,13 @@ body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--t
 <script>
 // ==================== FIREBASE CONFIGURATION ====================
 const firebaseConfig = {
-  apiKey: "AIzaSyBdmUbkomgKkpiuVs-V-oIwBl259-NVog8",
-  authDomain: "gsm-planner.firebaseapp.com",
-  projectId: "gsm-planner",
-  storageBucket: "gsm-planner.firebasestorage.app",
-  messagingSenderId: "461817476456",
-  appId: "1:461817476456:web:0fffebf3c4a6956d3392dd",
-  measurementId: "G-4TV1YYY6VR"
+apiKey: "AIzaSyBdmUbkomgKkpiuVs-V-oIwBl259-NVog8",
+authDomain: "gsm-planner.firebaseapp.com",
+projectId: "gsm-planner",
+storageBucket: "gsm-planner.firebasestorage.app",
+messagingSenderId: "461817476456",
+appId: "1:461817476456:web:0fffebf3c4a6956d3392dd",
+measurementId: "G-4TV1YYY6VR"
 };
 
 // Initialize Firebase
@@ -589,258 +589,258 @@ let isSyncing = false;
 
 // ==================== FIREBASE SYNC FUNCTIONS ====================
 function showSyncStatus(message, isSyncing = false) {
-  const status = document.getElementById('syncStatus');
-  const text = document.getElementById('syncText');
-  text.textContent = message;
-  status.classList.add('show');
-  if (isSyncing) {
-    status.classList.add('syncing');
-  } else {
-    status.classList.remove('syncing');
-    setTimeout(() => {
-      status.classList.remove('show');
-    }, 3000);
-  }
+const status = document.getElementById('syncStatus');
+const text = document.getElementById('syncText');
+text.textContent = message;
+status.classList.add('show');
+if (isSyncing) {
+status.classList.add('syncing');
+} else {
+status.classList.remove('syncing');
+setTimeout(() => {
+status.classList.remove('show');
+}, 3000);
+}
 }
 
 // Load data from Firebase with real-time listener
 async function loadFromFirebase() {
-  try {
-    showSyncStatus('Mengambil data...', true);
-    
-    // Programs
-    db.collection('gsm_data').doc('programs').onSnapshot((doc) => {
-      if (doc.exists) {
-        programsData = doc.data().data || [];
-        renderAllPrograms('all');
-        renderFeaturedPrograms();
-        updateStats();
-        renderKpiDashboard();
-      } else {
-        saveToFirebase('programs', defaultPrograms);
-      }
-    });
-    
-    // Finance
-    db.collection('gsm_data').doc('finance').onSnapshot((doc) => {
-      if (doc.exists) {
-        financeData = doc.data().data || [];
-        renderFinanceTable();
-      } else {
-        saveToFirebase('finance', defaultFinance);
-      }
-    });
-    
-    // Meetings
-    db.collection('gsm_data').doc('meetings').onSnapshot((doc) => {
-      if (doc.exists) {
-        meetingsData = doc.data().data || [];
-        renderMeetings();
-      } else {
-        saveToFirebase('meetings', defaultMeetings);
-      }
-    });
-    
-    // Notulen
-    db.collection('gsm_data').doc('notulen').onSnapshot((doc) => {
-      if (doc.exists) {
-        notulenData = doc.data().data || [];
-        renderNotulenList();
-        updateStats();
-      } else {
-        saveToFirebase('notulen', []);
-      }
-    });
-    
-    // KPI Settings
-    db.collection('gsm_settings').doc('kpi').onSnapshot((doc) => {
-      if (doc.exists) {
-        kpiSettings = doc.data().data || defaultKpiSettings;
-      } else {
-        saveToFirebase('kpi', defaultKpiSettings, 'gsm_settings');
-      }
-    });
-    
-    // Users
-    db.collection('gsm_users').onSnapshot((snapshot) => {
-      usersData = [];
-      snapshot.forEach((doc) => {
-        usersData.push({ id: doc.id, ...doc.data() });
-      });
-      if (currentRole === 'admin') {
-        renderUsersTable();
-      }
-    });
-    
-    showSyncStatus('Tersinkronisasi', false);
-  } catch (error) {
-    console.error('Error loading from Firebase:', error);
-    showSyncStatus('Gagal sinkronisasi', false);
-    showToast('Gagal terhubung ke Firebase.', 'error');
-  }
+try {
+showSyncStatus('Mengambil data...', true);
+
+// Programs
+db.collection('gsm_data').doc('programs').onSnapshot((doc) => {
+if (doc.exists) {
+programsData = doc.data().data || [];
+renderAllPrograms('all');
+renderFeaturedPrograms();
+updateStats();
+renderKpiDashboard();
+} else {
+saveToFirebase('programs', defaultPrograms);
+}
+});
+
+// Finance
+db.collection('gsm_data').doc('finance').onSnapshot((doc) => {
+if (doc.exists) {
+financeData = doc.data().data || [];
+renderFinanceTable();
+} else {
+saveToFirebase('finance', defaultFinance);
+}
+});
+
+// Meetings
+db.collection('gsm_data').doc('meetings').onSnapshot((doc) => {
+if (doc.exists) {
+meetingsData = doc.data().data || [];
+renderMeetings();
+} else {
+saveToFirebase('meetings', defaultMeetings);
+}
+});
+
+// Notulen
+db.collection('gsm_data').doc('notulen').onSnapshot((doc) => {
+if (doc.exists) {
+notulenData = doc.data().data || [];
+renderNotulenList();
+updateStats();
+} else {
+saveToFirebase('notulen', []);
+}
+});
+
+// KPI Settings
+db.collection('gsm_settings').doc('kpi').onSnapshot((doc) => {
+if (doc.exists) {
+kpiSettings = doc.data().data || defaultKpiSettings;
+} else {
+saveToFirebase('kpi', defaultKpiSettings, 'gsm_settings');
+}
+});
+
+// Users
+db.collection('gsm_users').onSnapshot((snapshot) => {
+usersData = [];
+snapshot.forEach((doc) => {
+usersData.push({ id: doc.id, ...doc.data() });
+});
+if (currentRole === 'admin') {
+renderUsersTable();
+}
+});
+
+showSyncStatus('Tersinkronisasi', false);
+} catch (error) {
+console.error('Error loading from Firebase:', error);
+showSyncStatus('Gagal sinkronisasi', false);
+showToast('Gagal terhubung ke Firebase.', 'error');
+}
 }
 
 // Save data to Firebase
 async function saveToFirebase(collection, data, collectionPath = 'gsm_data') {
-  try {
-    isSyncing = true;
-    showSyncStatus('Menyimpan...', true);
-    
-    await db.collection(collectionPath).doc(collection).set({
-      data: data,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedBy: currentUser ? currentUser.username : 'anonymous'
-    }, { merge: true });
-    
-    isSyncing = false;
-    showSyncStatus('Tersimpan', false);
-    return true;
-  } catch (error) {
-    console.error('Error saving to Firebase:', error);
-    isSyncing = false;
-    showSyncStatus('Gagal menyimpan', false);
-    showToast('Gagal menyimpan ke Firebase: ' + error.message, 'error');
-    return false;
-  }
+try {
+isSyncing = true;
+showSyncStatus('Menyimpan...', true);
+
+await db.collection(collectionPath).doc(collection).set({
+data: data,
+updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+updatedBy: currentUser ? currentUser.username : 'anonymous'
+}, { merge: true });
+
+isSyncing = false;
+showSyncStatus('Tersimpan', false);
+return true;
+} catch (error) {
+console.error('Error saving to Firebase:', error);
+isSyncing = false;
+showSyncStatus('Gagal menyimpan', false);
+showToast('Gagal menyimpan ke Firebase: ' + error.message, 'error');
+return false;
+}
 }
 
 // ==================== INITIALIZATION ====================
 function init() {
-  loadFromFirebase();
-  updateStats();
-  setupAdminTrigger();
-  checkAdminSession();
+loadFromFirebase();
+updateStats();
+setupAdminTrigger();
+checkAdminSession();
 }
 
 // ==================== DATA MANAGEMENT ====================
 function saveData() {
-  saveToFirebase('programs', programsData);
-  saveToFirebase('finance', financeData);
-  saveToFirebase('meetings', meetingsData);
-  saveToFirebase('notulen', notulenData);
-  updateStats();
-  return true;
+saveToFirebase('programs', programsData);
+saveToFirebase('finance', financeData);
+saveToFirebase('meetings', meetingsData);
+saveToFirebase('notulen', notulenData);
+updateStats();
+return true;
 }
 
 function resetData() {
-  if (confirm('Reset semua data ke default? Data di semua device akan terreset!')) {
-    saveToFirebase('programs', defaultPrograms);
-    saveToFirebase('finance', defaultFinance);
-    saveToFirebase('meetings', defaultMeetings);
-    saveToFirebase('notulen', []);
-    showToast('Data direset!', 'success');
-  }
+if (confirm('Reset semua data ke default? Data di semua device akan terreset!')) {
+saveToFirebase('programs', defaultPrograms);
+saveToFirebase('finance', defaultFinance);
+saveToFirebase('meetings', defaultMeetings);
+saveToFirebase('notulen', []);
+showToast('Data direset!', 'success');
+}
 }
 
 // ==================== ADMIN & USER MANAGEMENT ====================
 function checkAdminSession() {
-  const session = sessionStorage.getItem('gsm_admin_session'), sessionUser = sessionStorage.getItem('gsm_current_user');
-  if (session === 'true' && sessionUser) {
-    currentUser = JSON.parse(sessionUser);
-    currentRole = currentUser.role;
-    showAdminMode();
-  }
+const session = sessionStorage.getItem('gsm_admin_session'), sessionUser = sessionStorage.getItem('gsm_current_user');
+if (session === 'true' && sessionUser) {
+currentUser = JSON.parse(sessionUser);
+currentRole = currentUser.role;
+showAdminMode();
+}
 }
 
 function setupAdminTrigger() {
-  document.querySelectorAll('.signature-box').forEach(sig => { sig.addEventListener('click', handleSignatureClick); });
-  document.addEventListener('keydown', (e) => { if (e.ctrlKey && e.shiftKey && (e.key === 'G' || e.key === 'g')) { e.preventDefault(); openLoginModal(); } });
-  document.getElementById('adminTrigger').addEventListener('click', openLoginModal);
+document.querySelectorAll('.signature-box').forEach(sig => { sig.addEventListener('click', handleSignatureClick); });
+document.addEventListener('keydown', (e) => { if (e.ctrlKey && e.shiftKey && (e.key === 'G' || e.key === 'g')) { e.preventDefault(); openLoginModal(); } });
+document.getElementById('adminTrigger').addEventListener('click', openLoginModal);
 }
 
 function handleSignatureClick() { clickCount++; clearTimeout(clickTimer); clickTimer = setTimeout(() => { clickCount = 0; }, 2000); if (clickCount >= 5) { openLoginModal(); clickCount = 0; } }
 
 function showAdminMode() {
-  document.getElementById('adminBadge').classList.add('show');
-  document.getElementById('userInfoBadge').classList.add('show');
-  document.getElementById('userDisplay').textContent = currentUser.username;
-  const roleBadge = document.getElementById('userRoleBadge');
-  roleBadge.textContent = currentRole;
-  roleBadge.className = 'role-badge ' + currentRole;
-  document.getElementById('adminActions').classList.add('show');
-  document.getElementById('uploadNotulenBtn').style.display = 'flex';
-  document.getElementById('dataReset').classList.add('show');
-  
-  if (currentRole === 'admin') {
-    document.getElementById('kpiNavBtn').classList.add('show');
-    document.getElementById('usersNavBtn').classList.add('show');
-    document.getElementById('kpiStatCard').classList.add('show');
-    document.getElementById('kpi').classList.add('show');
-    document.getElementById('btnKpiSettings').style.display = 'flex';
-  } else if (currentRole === 'editor') {
-    document.getElementById('kpiNavBtn').classList.add('show');
-    document.getElementById('kpiStatCard').classList.add('show');
-    document.getElementById('kpi').classList.add('show');
-    document.getElementById('btnKpiSettings').style.display = 'none';
-  } else {
-    document.getElementById('btnAddProgram').style.display = 'none';
-    document.getElementById('btnAddFinance').style.display = 'none';
-    document.getElementById('btnAddMeeting').style.display = 'none';
-    document.getElementById('btnUploadNotulen').style.display = 'none';
-    document.getElementById('btnKpiSettings').style.display = 'none';
-  }
-  
-  document.querySelectorAll('.card-actions').forEach(el => { if (currentRole !== 'viewer') el.classList.add('show'); });
-  document.querySelectorAll('.card-action-btn.kpi').forEach(el => { if (currentRole !== 'viewer') el.classList.add('show'); });
-  document.querySelectorAll('.admin-only').forEach(el => { if (currentRole !== 'viewer') el.style.display = 'table-cell'; });
-  document.querySelectorAll('.notulen-btn.edit, .notulen-btn.delete').forEach(el => { if (currentRole !== 'viewer') el.classList.add('show'); });
-  
-  sessionStorage.setItem('gsm_admin_session', 'true');
-  sessionStorage.setItem('gsm_current_user', JSON.stringify(currentUser));
-  renderKpiDashboard();
-  renderUsersTable();
-  showToast(`Login berhasil! ${currentUser.username} (${currentRole})`, 'success');
+document.getElementById('adminBadge').classList.add('show');
+document.getElementById('userInfoBadge').classList.add('show');
+document.getElementById('userDisplay').textContent = currentUser.username;
+const roleBadge = document.getElementById('userRoleBadge');
+roleBadge.textContent = currentRole;
+roleBadge.className = 'role-badge ' + currentRole;
+document.getElementById('adminActions').classList.add('show');
+document.getElementById('uploadNotulenBtn').style.display = 'flex';
+document.getElementById('dataReset').classList.add('show');
+
+if (currentRole === 'admin') {
+document.getElementById('kpiNavBtn').classList.add('show');
+document.getElementById('usersNavBtn').classList.add('show');
+document.getElementById('kpiStatCard').classList.add('show');
+document.getElementById('kpi').classList.add('show');
+document.getElementById('btnKpiSettings').style.display = 'flex';
+} else if (currentRole === 'editor') {
+document.getElementById('kpiNavBtn').classList.add('show');
+document.getElementById('kpiStatCard').classList.add('show');
+document.getElementById('kpi').classList.add('show');
+document.getElementById('btnKpiSettings').style.display = 'none';
+} else {
+document.getElementById('btnAddProgram').style.display = 'none';
+document.getElementById('btnAddFinance').style.display = 'none';
+document.getElementById('btnAddMeeting').style.display = 'none';
+document.getElementById('btnUploadNotulen').style.display = 'none';
+document.getElementById('btnKpiSettings').style.display = 'none';
+}
+
+document.querySelectorAll('.card-actions').forEach(el => { if (currentRole !== 'viewer') el.classList.add('show'); });
+document.querySelectorAll('.card-action-btn.kpi').forEach(el => { if (currentRole !== 'viewer') el.classList.add('show'); });
+document.querySelectorAll('.admin-only').forEach(el => { if (currentRole !== 'viewer') el.style.display = 'table-cell'; });
+document.querySelectorAll('.notulen-btn.edit, .notulen-btn.delete').forEach(el => { if (currentRole !== 'viewer') el.classList.add('show'); });
+
+sessionStorage.setItem('gsm_admin_session', 'true');
+sessionStorage.setItem('gsm_current_user', JSON.stringify(currentUser));
+renderKpiDashboard();
+renderUsersTable();
+showToast(`Login berhasil! ${currentUser.username} (${currentRole})`, 'success');
 }
 
 function hideAdminMode() {
-  document.getElementById('adminBadge').classList.remove('show');
-  document.getElementById('userInfoBadge').classList.remove('show');
-  document.getElementById('adminActions').classList.remove('show');
-  document.getElementById('uploadNotulenBtn').style.display = 'none';
-  document.getElementById('dataReset').classList.remove('show');
-  document.getElementById('kpiNavBtn').classList.remove('show');
-  document.getElementById('usersNavBtn').classList.remove('show');
-  document.getElementById('kpiStatCard').classList.remove('show');
-  document.getElementById('kpi').classList.remove('show');
-  if (document.getElementById('kpi').classList.contains('active')) { showView('dashboard'); }
-  if (document.getElementById('users').classList.contains('active')) { showView('dashboard'); }
-  document.querySelectorAll('.card-actions').forEach(el => { el.classList.remove('show'); });
-  document.querySelectorAll('.card-action-btn.kpi').forEach(el => { el.classList.remove('show'); });
-  document.querySelectorAll('.admin-only').forEach(el => { el.style.display = 'none'; });
-  document.querySelectorAll('.notulen-btn.edit, .notulen-btn.delete').forEach(el => { el.classList.remove('show'); });
-  currentUser = null; currentRole = '';
-  sessionStorage.removeItem('gsm_admin_session');
-  sessionStorage.removeItem('gsm_current_user');
-  showToast('Logout berhasil', 'success');
+document.getElementById('adminBadge').classList.remove('show');
+document.getElementById('userInfoBadge').classList.remove('show');
+document.getElementById('adminActions').classList.remove('show');
+document.getElementById('uploadNotulenBtn').style.display = 'none';
+document.getElementById('dataReset').classList.remove('show');
+document.getElementById('kpiNavBtn').classList.remove('show');
+document.getElementById('usersNavBtn').classList.remove('show');
+document.getElementById('kpiStatCard').classList.remove('show');
+document.getElementById('kpi').classList.remove('show');
+if (document.getElementById('kpi').classList.contains('active')) { showView('dashboard'); }
+if (document.getElementById('users').classList.contains('active')) { showView('dashboard'); }
+document.querySelectorAll('.card-actions').forEach(el => { el.classList.remove('show'); });
+document.querySelectorAll('.card-action-btn.kpi').forEach(el => { el.classList.remove('show'); });
+document.querySelectorAll('.admin-only').forEach(el => { el.style.display = 'none'; });
+document.querySelectorAll('.notulen-btn.edit, .notulen-btn.delete').forEach(el => { el.classList.remove('show'); });
+currentUser = null; currentRole = '';
+sessionStorage.removeItem('gsm_admin_session');
+sessionStorage.removeItem('gsm_current_user');
+showToast('Logout berhasil', 'success');
 }
 
 function logoutAdmin() { hideAdminMode(); }
 
 // ==================== VIEW MANAGEMENT ====================
 function showView(viewId) {
-  if (viewId === 'kpi' && currentRole === 'viewer') { showToast('Akses ditolak! Viewer tidak dapat akses KPI.', 'error'); return; }
-  if (viewId === 'users' && currentRole !== 'admin') { showToast('Akses ditolak! Hanya Admin.', 'error'); return; }
-  document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-  document.getElementById(viewId).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  if (viewId === 'kpi') { renderKpiDashboard(); }
-  if (viewId === 'users') { renderUsersTable(); }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+if (viewId === 'kpi' && currentRole === 'viewer') { showToast('Akses ditolak! Viewer tidak dapat akses KPI.', 'error'); return; }
+if (viewId === 'users' && currentRole !== 'admin') { showToast('Akses ditolak! Hanya Admin.', 'error'); return; }
+document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+document.getElementById(viewId).classList.add('active');
+document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+event.currentTarget.classList.add('active');
+if (viewId === 'kpi') { renderKpiDashboard(); }
+if (viewId === 'users') { renderUsersTable(); }
+window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function filterCategory(category) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  renderAllPrograms(category);
+document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+event.currentTarget.classList.add('active');
+renderAllPrograms(category);
 }
 
 // ==================== RENDER FUNCTIONS ====================
 function updateStats() {
-  document.getElementById('totalPrograms').textContent = programsData.length;
-  document.getElementById('totalCategories').textContent = [...new Set(programsData.map(p => p.category))].length;
-  document.getElementById('totalNotulen').textContent = notulenData.filter(n => n.status === 'published').length;
-  document.getElementById('avgKpiScore').textContent = calculateAverageKpi() + '%';
+document.getElementById('totalPrograms').textContent = programsData.length;
+document.getElementById('totalCategories').textContent = [...new Set(programsData.map(p => p.category))].length;
+document.getElementById('totalNotulen').textContent = notulenData.filter(n => n.status === 'published').length;
+document.getElementById('avgKpiScore').textContent = calculateAverageKpi() + '%';
 }
 
 function calculateAverageKpi() { if (programsData.length === 0) return 0; return Math.round(programsData.reduce((sum, p) => sum + (p.kpi ? p.kpi.progress : 0), 0) / programsData.length); }
@@ -848,230 +848,230 @@ function calculateAverageKpi() { if (programsData.length === 0) return 0; return
 function renderFeaturedPrograms() { document.getElementById('featuredPrograms').innerHTML = programsData.slice(0, 4).map(p => createProgramCard(p)).join(''); }
 
 function createProgramCard(program) {
-  return `<div class="program-card" onclick="openViewModal(${program.id}, 'program')"><div class="card-actions" onclick="event.stopPropagation()"><button class="card-action-btn edit" onclick="openEditModal(${program.id}, 'program')"><i class="fas fa-edit"></i></button><button class="card-action-btn delete" onclick="deleteItem(${program.id}, 'program')"><i class="fas fa-trash"></i></button>${currentRole !== 'viewer' ? `<button class="card-action-btn kpi" onclick="openKpiProgramModal(${program.id})"><i class="fas fa-chart-line"></i></button>` : ''}</div><h4>${program.title}</h4><div class="program-info"><i class="fas fa-calendar-alt"></i><span><span class="label">Tanggal:</span> ${program.date}</span></div><div class="program-info"><i class="fas fa-map-marker-alt"></i><span><span class="label">Lokasi:</span> ${program.location}</span></div><div class="outcome"><h5><i class="fas fa-bullseye"></i> Outcome</h5><p>${program.outcome}</p></div><div class="impact"><h5><i class="fas fa-heart"></i> Impact</h5><p>${program.impact}</p></div></div>`;
+return `<div class="program-card" onclick="openViewModal(${program.id}, 'program')"><div class="card-actions" onclick="event.stopPropagation()"><button class="card-action-btn edit" onclick="openEditModal(${program.id}, 'program')"><i class="fas fa-edit"></i></button><button class="card-action-btn delete" onclick="deleteItem(${program.id}, 'program')"><i class="fas fa-trash"></i></button>${currentRole !== 'viewer' ? `<button class="card-action-btn kpi" onclick="openKpiProgramModal(${program.id})"><i class="fas fa-chart-line"></i></button>` : ''}</div><h4>${program.title}</h4><div class="program-info"><i class="fas fa-calendar-alt"></i><span><span class="label">Tanggal:</span> ${program.date}</span></div><div class="program-info"><i class="fas fa-map-marker-alt"></i><span><span class="label">Lokasi:</span> ${program.location}</span></div><div class="outcome"><h5><i class="fas fa-bullseye"></i> Outcome</h5><p>${program.outcome}</p></div><div class="impact"><h5><i class="fas fa-heart"></i> Impact</h5><p>${program.impact}</p></div></div>`;
 }
 
 function renderAllPrograms(category) {
-  const container = document.getElementById('allPrograms'), filtered = category === 'all' ? programsData : programsData.filter(p => p.category === category);
-  const categories = {}; filtered.forEach(p => { if (!categories[p.category]) { categories[p.category] = []; } categories[p.category].push(p); });
-  let html = '';
-  for (const [cat, programs] of Object.entries(categories)) {
-    html += `<div class="category-section"><div class="category-header"><div class="cat-badge">${cat}</div><h2>${programs[0].catName}</h2></div><div class="program-grid">${programs.map(p => createProgramCard(p)).join('')}</div></div>`;
-  }
-  container.innerHTML = html;
-  if (currentRole !== 'viewer') { document.querySelectorAll('.card-actions').forEach(el => { el.classList.add('show'); }); }
+const container = document.getElementById('allPrograms'), filtered = category === 'all' ? programsData : programsData.filter(p => p.category === category);
+const categories = {}; filtered.forEach(p => { if (!categories[p.category]) { categories[p.category] = []; } categories[p.category].push(p); });
+let html = '';
+for (const [cat, programs] of Object.entries(categories)) {
+html += `<div class="category-section"><div class="category-header"><div class="cat-badge">${cat}</div><h2>${programs[0].catName}</h2></div><div class="program-grid">${programs.map(p => createProgramCard(p)).join('')}</div></div>`;
+}
+container.innerHTML = html;
+if (currentRole !== 'viewer') { document.querySelectorAll('.card-actions').forEach(el => { el.classList.add('show'); }); }
 }
 
 function renderFinanceTable() {
-  const tbody = document.getElementById('financeTable');
-  tbody.innerHTML = financeData.map((f, i) => `<tr><td>${i+1}</td><td><strong>${f.title}</strong></td><td>${f.outcome}</td><td>${f.impact}</td><td>${f.execution}</td><td class="admin-only" style="display: ${currentRole !== 'viewer' ? 'table-cell' : 'none'};"><button class="btn btn-primary" style="padding: 5px 10px; font-size: 0.8rem;" onclick="openFinanceModal(${f.id})">Edit</button><button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem;" onclick="deleteFinance(${f.id})">Hapus</button></td></tr>`).join('');
+const tbody = document.getElementById('financeTable');
+tbody.innerHTML = financeData.map((f, i) => `<tr><td>${i+1}</td><td><strong>${f.title}</strong></td><td>${f.outcome}</td><td>${f.impact}</td><td>${f.execution}</td><td class="admin-only" style="display: ${currentRole !== 'viewer' ? 'table-cell' : 'none'};"><button class="btn btn-primary" style="padding: 5px 10px; font-size: 0.8rem;" onclick="openFinanceModal(${f.id})">Edit</button><button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem;" onclick="deleteFinance(${f.id})">Hapus</button></td></tr>`).join('');
 }
 
 function renderMeetings() {
-  const container = document.getElementById('meetingsGrid');
-  container.innerHTML = meetingsData.map(m => {
-    const hasNotulen = notulenData.some(n => n.meetingId == m.id && n.status === 'published');
-    return `<div class="program-card meeting-with-notulen" onclick="openViewModal(${m.id}, 'meeting')">${hasNotulen ? '<span class="notulen-indicator"><i class="fas fa-file-alt"></i> Ada Notulen</span>' : ''}<div class="card-actions" onclick="event.stopPropagation()"><button class="card-action-btn edit" onclick="openEditModal(${m.id}, 'meeting')"><i class="fas fa-edit"></i></button><button class="card-action-btn delete" onclick="deleteItem(${m.id}, 'meeting')"><i class="fas fa-trash"></i></button><button class="card-action-btn upload" onclick="openUploadNotulenModal(${m.id})"><i class="fas fa-upload"></i></button></div><h4>${m.title}</h4><div class="program-info"><i class="fas fa-bullseye"></i><span><span class="label">Outcome:</span> ${m.outcome}</span></div><div class="program-info"><i class="fas fa-heart"></i><span><span class="label">Impact:</span> ${m.impact}</span></div><div class="program-info"><i class="fas fa-clock"></i><span><span class="label">Jadwal:</span> ${m.execution}</span></div></div>`;
-  }).join('');
-  if (currentRole !== 'viewer') { document.querySelectorAll('.card-actions').forEach(el => { el.classList.add('show'); }); }
+const container = document.getElementById('meetingsGrid');
+container.innerHTML = meetingsData.map(m => {
+const hasNotulen = notulenData.some(n => n.meetingId == m.id && n.status === 'published');
+return `<div class="program-card meeting-with-notulen" onclick="openViewModal(${m.id}, 'meeting')">${hasNotulen ? '<span class="notulen-indicator"><i class="fas fa-file-alt"></i> Ada Notulen</span>' : ''}<div class="card-actions" onclick="event.stopPropagation()"><button class="card-action-btn edit" onclick="openEditModal(${m.id}, 'meeting')"><i class="fas fa-edit"></i></button><button class="card-action-btn delete" onclick="deleteItem(${m.id}, 'meeting')"><i class="fas fa-trash"></i></button><button class="card-action-btn upload" onclick="openUploadNotulenModal(${m.id})"><i class="fas fa-upload"></i></button></div><h4>${m.title}</h4><div class="program-info"><i class="fas fa-bullseye"></i><span><span class="label">Outcome:</span> ${m.outcome}</span></div><div class="program-info"><i class="fas fa-heart"></i><span><span class="label">Impact:</span> ${m.impact}</span></div><div class="program-info"><i class="fas fa-clock"></i><span><span class="label">Jadwal:</span> ${m.execution}</span></div></div>`;
+}).join('');
+if (currentRole !== 'viewer') { document.querySelectorAll('.card-actions').forEach(el => { el.classList.add('show'); }); }
 }
 
 function renderNotulenList() {
-  const container = document.getElementById('notulenList'), published = notulenData.filter(n => n.status === 'published' || (currentRole !== 'viewer' && n.status !== 'draft'));
-  if (published.length === 0) { container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 20px;"><i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>Belum ada notulen</p>'; return; }
-  container.innerHTML = published.map(n => {
-    const statusClass = n.status === 'published' ? 'published' : n.status === 'review' ? 'review' : 'draft';
-    const statusText = n.status === 'published' ? 'Publik' : n.status === 'review' ? 'Review' : 'Draft';
-    const fileSize = n.fileSize ? (n.fileSize / 1024).toFixed(1) + ' KB' : 'N/A';
-    return `<div class="notulen-item"><div class="notulen-info"><h4>${n.title}<span class="notulen-status ${statusClass}">${statusText}</span></h4><p><i class="fas fa-calendar"></i> ${formatDate(n.date)}</p>${n.description ? `<p><i class="fas fa-align-left"></i> ${n.description}</p>` : ''}<div class="file-info"><i class="fas fa-file"></i>${n.fileName || 'notulen.pdf'} • ${fileSize}</div></div><div class="notulen-actions"><button class="notulen-btn download" onclick="downloadNotulen(${n.id})"><i class="fas fa-download"></i> Download</button><button class="notulen-btn edit ${currentRole !== 'viewer' ? 'show' : ''}" onclick="openEditNotulenModal(${n.id})"><i class="fas fa-edit"></i> Edit</button><button class="notulen-btn delete ${currentRole !== 'viewer' ? 'show' : ''}" onclick="deleteNotulen(${n.id})"><i class="fas fa-trash"></i> Hapus</button></div></div>`;
-  }).join('');
+const container = document.getElementById('notulenList'), published = notulenData.filter(n => n.status === 'published' || (currentRole !== 'viewer' && n.status !== 'draft'));
+if (published.length === 0) { container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 20px;"><i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>Belum ada notulen</p>'; return; }
+container.innerHTML = published.map(n => {
+const statusClass = n.status === 'published' ? 'published' : n.status === 'review' ? 'review' : 'draft';
+const statusText = n.status === 'published' ? 'Publik' : n.status === 'review' ? 'Review' : 'Draft';
+const fileSize = n.fileSize ? (n.fileSize / 1024).toFixed(1) + ' KB' : 'N/A';
+return `<div class="notulen-item"><div class="notulen-info"><h4>${n.title}<span class="notulen-status ${statusClass}">${statusText}</span></h4><p><i class="fas fa-calendar"></i> ${formatDate(n.date)}</p>${n.description ? `<p><i class="fas fa-align-left"></i> ${n.description}</p>` : ''}<div class="file-info"><i class="fas fa-file"></i>${n.fileName || 'notulen.pdf'} • ${fileSize}</div></div><div class="notulen-actions"><button class="notulen-btn download" onclick="downloadNotulen(${n.id})"><i class="fas fa-download"></i> Download</button><button class="notulen-btn edit ${currentRole !== 'viewer' ? 'show' : ''}" onclick="openEditNotulenModal(${n.id})"><i class="fas fa-edit"></i> Edit</button><button class="notulen-btn delete ${currentRole !== 'viewer' ? 'show' : ''}" onclick="deleteNotulen(${n.id})"><i class="fas fa-trash"></i> Hapus</button></div></div>`;
+}).join('');
 }
 
 // ==================== USER MANAGEMENT ====================
 function renderUsersTable() {
-  if (currentRole !== 'admin') return;
-  const tbody = document.getElementById('usersTableBody');
-  tbody.innerHTML = usersData.map(u => {
-    const canDelete = u.id !== currentUser.id;
-    return `<tr><td><strong>${u.username}</strong></td><td><span class="role-badge ${u.role}">${u.role}</span></td><td><span class="status-badge ${u.status}">${u.status}</span></td><td class="user-actions"><button class="user-action-btn edit" onclick="openUserModal(${u.id})" title="Edit"><i class="fas fa-edit"></i></button>${canDelete ? `<button class="user-action-btn delete" onclick="deleteUser(${u.id})" title="Hapus"><i class="fas fa-trash"></i></button>` : '<span style="color: var(--text-light); font-size: 0.75rem;">(Anda)</span>'}</td></tr>`;
-  }).join('');
+if (currentRole !== 'admin') return;
+const tbody = document.getElementById('usersTableBody');
+tbody.innerHTML = usersData.map(u => {
+const canDelete = u.id !== currentUser.id;
+return `<tr><td><strong>${u.username}</strong></td><td><span class="role-badge ${u.role}">${u.role}</span></td><td><span class="status-badge ${u.status}">${u.status}</span></td><td class="user-actions"><button class="user-action-btn edit" onclick="openUserModal(${u.id})" title="Edit"><i class="fas fa-edit"></i></button>${canDelete ? `<button class="user-action-btn delete" onclick="deleteUser(${u.id})" title="Hapus"><i class="fas fa-trash"></i></button>` : '<span style="color: var(--text-light); font-size: 0.75rem;">(Anda)</span>'}</td></tr>`;
+}).join('');
 }
 
 function openUserModal(userId = null) {
-  if (currentRole !== 'admin') { showToast('Akses ditolak! Hanya Admin.', 'error'); return; }
-  document.getElementById('userForm').reset();
-  document.getElementById('userId').value = '';
-  document.getElementById('userPassword').value = '';
-  document.getElementById('userPassword').required = true;
-  if (userId) {
-    const user = usersData.find(u => u.id === userId);
-    if (user) {
-      document.getElementById('userId').value = user.id;
-      document.getElementById('userUsername').value = user.username;
-      document.getElementById('userPassword').value = '';
-      document.getElementById('userPassword').required = false;
-      document.getElementById('userRole').value = user.role;
-      document.getElementById('userStatus').value = user.status;
-      document.getElementById('userModalTitle').innerHTML = '<i class="fas fa-user-edit"></i> Edit User';
-    }
-  } else {
-    document.getElementById('userModalTitle').innerHTML = '<i class="fas fa-user-plus"></i> Tambah User';
-  }
-  document.getElementById('userModal').style.display = 'flex';
+if (currentRole !== 'admin') { showToast('Akses ditolak! Hanya Admin.', 'error'); return; }
+document.getElementById('userForm').reset();
+document.getElementById('userId').value = '';
+document.getElementById('userPassword').value = '';
+document.getElementById('userPassword').required = true;
+if (userId) {
+const user = usersData.find(u => u.id === userId);
+if (user) {
+document.getElementById('userId').value = user.id;
+document.getElementById('userUsername').value = user.username;
+document.getElementById('userPassword').value = '';
+document.getElementById('userPassword').required = false;
+document.getElementById('userRole').value = user.role;
+document.getElementById('userStatus').value = user.status;
+document.getElementById('userModalTitle').innerHTML = '<i class="fas fa-user-edit"></i> Edit User';
+}
+} else {
+document.getElementById('userModalTitle').innerHTML = '<i class="fas fa-user-plus"></i> Tambah User';
+}
+document.getElementById('userModal').style.display = 'flex';
 }
 
 function closeUserModal() { document.getElementById('userModal').style.display = 'none'; }
 
 document.getElementById('userForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  if (currentRole !== 'admin') { showToast('Akses ditolak!', 'error'); return; }
-  const userId = document.getElementById('userId').value, username = document.getElementById('userUsername').value.trim(), password = document.getElementById('userPassword').value, role = document.getElementById('userRole').value, status = document.getElementById('userStatus').value;
-  if (!username) { showToast('Username wajib!', 'error'); return; }
-  if (!userId) {
-    if (usersData.find(u => u.username.toLowerCase() === username.toLowerCase())) { showToast('Username sudah ada!', 'error'); return; }
-    if (!password) { showToast('Password wajib!', 'error'); return; }
-  }
-  if (userId) {
-    const index = usersData.findIndex(u => u.id == userId);
-    if (index !== -1) { 
-      usersData[index].username = username; 
-      if (password) { usersData[index].password = password; } 
-      usersData[index].role = role; 
-      usersData[index].status = status; 
-      await db.collection('gsm_users').doc(userId).update({ username, role, status, ...(password ? { password } : {}) });
-      showToast('User diperbarui!', 'success'); 
-    }
-  } else {
-    const newId = usersData.length > 0 ? Math.max(...usersData.map(u => u.id)) + 1 : 1;
-    const userData = { id: newId, username, password, role, status };
-    await db.collection('gsm_users').doc(newId.toString()).set(userData);
-    showToast('User ditambahkan!', 'success');
-  }
-  renderUsersTable(); closeUserModal();
+e.preventDefault();
+if (currentRole !== 'admin') { showToast('Akses ditolak!', 'error'); return; }
+const userId = document.getElementById('userId').value, username = document.getElementById('userUsername').value.trim(), password = document.getElementById('userPassword').value, role = document.getElementById('userRole').value, status = document.getElementById('userStatus').value;
+if (!username) { showToast('Username wajib!', 'error'); return; }
+if (!userId) {
+if (usersData.find(u => u.username.toLowerCase() === username.toLowerCase())) { showToast('Username sudah ada!', 'error'); return; }
+if (!password) { showToast('Password wajib!', 'error'); return; }
+}
+if (userId) {
+const index = usersData.findIndex(u => u.id == userId);
+if (index !== -1) {
+usersData[index].username = username;
+if (password) { usersData[index].password = password; }
+usersData[index].role = role;
+usersData[index].status = status;
+await db.collection('gsm_users').doc(userId).update({ username, role, status, ...(password ? { password } : {}) });
+showToast('User diperbarui!', 'success');
+}
+} else {
+const newId = usersData.length > 0 ? Math.max(...usersData.map(u => u.id)) + 1 : 1;
+const userData = { id: newId, username, password, role, status };
+await db.collection('gsm_users').doc(newId.toString()).set(userData);
+showToast('User ditambahkan!', 'success');
+}
+renderUsersTable(); closeUserModal();
 });
 
 function deleteUser(userId) {
-  if (currentRole !== 'admin') { showToast('Akses ditolak!', 'error'); return; }
-  if (userId === currentUser.id) { showToast('Tidak bisa hapus diri sendiri!', 'error'); return; }
-  if (!confirm('Hapus user ini?')) return;
-  db.collection('gsm_users').doc(userId.toString()).delete();
-  showToast('User dihapus!', 'success');
+if (currentRole !== 'admin') { showToast('Akses ditolak!', 'error'); return; }
+if (userId === currentUser.id) { showToast('Tidak bisa hapus diri sendiri!', 'error'); return; }
+if (!confirm('Hapus user ini?')) return;
+db.collection('gsm_users').doc(userId.toString()).delete();
+showToast('User dihapus!', 'success');
 }
 
 // ==================== FINANCE FUNCTIONS ====================
 function openFinanceModal(financeId = null) {
-  if (currentRole === 'viewer') { showToast('Akses ditolak! Viewer tidak dapat edit.', 'error'); return; }
-  document.getElementById('financeForm').reset();
-  document.getElementById('financeId').value = '';
-  if (financeId) {
-    const finance = financeData.find(f => f.id === financeId);
-    if (finance) {
-      document.getElementById('financeId').value = finance.id;
-      document.getElementById('financeTitle').value = finance.title;
-      document.getElementById('financeOutcome').value = finance.outcome;
-      document.getElementById('financeImpact').value = finance.impact;
-      document.getElementById('financeExecution').value = finance.execution;
-      document.getElementById('financeModalTitle').textContent = 'Edit Keuangan';
-    }
-  } else {
-    document.getElementById('financeModalTitle').textContent = 'Tambah Keuangan';
-  }
-  document.getElementById('financeModal').style.display = 'flex';
+if (currentRole === 'viewer') { showToast('Akses ditolak! Viewer tidak dapat edit.', 'error'); return; }
+document.getElementById('financeForm').reset();
+document.getElementById('financeId').value = '';
+if (financeId) {
+const finance = financeData.find(f => f.id === financeId);
+if (finance) {
+document.getElementById('financeId').value = finance.id;
+document.getElementById('financeTitle').value = finance.title;
+document.getElementById('financeOutcome').value = finance.outcome;
+document.getElementById('financeImpact').value = finance.impact;
+document.getElementById('financeExecution').value = finance.execution;
+document.getElementById('financeModalTitle').textContent = 'Edit Keuangan';
+}
+} else {
+document.getElementById('financeModalTitle').textContent = 'Tambah Keuangan';
+}
+document.getElementById('financeModal').style.display = 'flex';
 }
 
 function closeFinanceModal() { document.getElementById('financeModal').style.display = 'none'; }
 
 document.getElementById('financeForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
-  const financeId = document.getElementById('financeId').value;
-  const title = document.getElementById('financeTitle').value;
-  const outcome = document.getElementById('financeOutcome').value;
-  const impact = document.getElementById('financeImpact').value;
-  const execution = document.getElementById('financeExecution').value;
-  if (financeId) {
-    const index = financeData.findIndex(f => f.id == financeId);
-    if (index !== -1) {
-      financeData[index] = { ...financeData[index], title, outcome, impact, execution };
-      await saveToFirebase('finance', financeData);
-      showToast('Keuangan berhasil diupdate!', 'success');
-    }
-  } else {
-    const newId = financeData.length > 0 ? Math.max(...financeData.map(f => f.id)) + 1 : 1;
-    financeData.push({ id: newId, title, outcome, impact, execution });
-    await saveToFirebase('finance', financeData);
-    showToast('Keuangan berhasil ditambahkan!', 'success');
-  }
-  renderFinanceTable();
-  closeFinanceModal();
+e.preventDefault();
+if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
+const financeId = document.getElementById('financeId').value;
+const title = document.getElementById('financeTitle').value;
+const outcome = document.getElementById('financeOutcome').value;
+const impact = document.getElementById('financeImpact').value;
+const execution = document.getElementById('financeExecution').value;
+if (financeId) {
+const index = financeData.findIndex(f => f.id == financeId);
+if (index !== -1) {
+financeData[index] = { ...financeData[index], title, outcome, impact, execution };
+await saveToFirebase('finance', financeData);
+showToast('Keuangan berhasil diupdate!', 'success');
+}
+} else {
+const newId = financeData.length > 0 ? Math.max(...financeData.map(f => f.id)) + 1 : 1;
+financeData.push({ id: newId, title, outcome, impact, execution });
+await saveToFirebase('finance', financeData);
+showToast('Keuangan berhasil ditambahkan!', 'success');
+}
+renderFinanceTable();
+closeFinanceModal();
 });
 
 function deleteFinance(financeId) {
-  if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
-  if (!confirm('Hapus data keuangan ini?')) return;
-  financeData = financeData.filter(f => f.id !== financeId);
-  saveToFirebase('finance', financeData);
-  renderFinanceTable();
-  showToast('Keuangan dihapus!', 'success');
+if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
+if (!confirm('Hapus data keuangan ini?')) return;
+financeData = financeData.filter(f => f.id !== financeId);
+saveToFirebase('finance', financeData);
+renderFinanceTable();
+showToast('Keuangan dihapus!', 'success');
 }
 
 // ==================== KPI FUNCTIONS ====================
 function renderKpiDashboard() { if (currentRole === 'viewer') return; renderKpiCards(); renderKpiChart(); renderKpiProgramList(); renderKpiSummary(); }
 
 function renderKpiCards() {
-  const container = document.getElementById('kpiDashboard');
-  const completionRate = programsData.length > 0 ? Math.round((programsData.filter(p => p.kpi?.status === 'completed').length / programsData.length) * 100) : 0;
-  const timelinessRate = programsData.length > 0 ? Math.round((programsData.filter(p => p.kpi?.status !== 'delayed').length / programsData.length) * 100) : 0;
-  const avgParticipants = programsData.filter(p => p.kpi?.participants > 0).length > 0 ? Math.round(programsData.reduce((sum, p) => sum + (p.kpi?.participants || 0), 0) / programsData.filter(p => p.kpi?.participants > 0).length) : 0;
-  const avgQuality = programsData.filter(p => p.kpi?.quality > 0).length > 0 ? (programsData.reduce((sum, p) => sum + (p.kpi?.quality || 0), 0) / programsData.filter(p => p.kpi?.quality > 0).length).toFixed(1) : 0;
-  container.innerHTML = `<div class="kpi-card"><div class="kpi-card-header"><h3>Penyelesaian</h3><div class="kpi-icon"><i class="fas fa-check-circle"></i></div></div><div class="kpi-value">${completionRate}%</div><div class="kpi-label">Target: ${kpiSettings.targetCompletion}%</div><div class="kpi-progress"><div class="kpi-progress-bar ${getProgressClass(completionRate)}" style="width: ${completionRate}%"></div></div></div><div class="kpi-card"><div class="kpi-card-header"><h3>Ketepatan Waktu</h3><div class="kpi-icon"><i class="fas fa-clock"></i></div></div><div class="kpi-value">${timelinessRate}%</div><div class="kpi-label">Target: ${kpiSettings.targetTimeliness}%</div><div class="kpi-progress"><div class="kpi-progress-bar ${getProgressClass(timelinessRate)}" style="width: ${timelinessRate}%"></div></div></div><div class="kpi-card"><div class="kpi-card-header"><h3>Partisipasi</h3><div class="kpi-icon"><i class="fas fa-users"></i></div></div><div class="kpi-value">${avgParticipants}</div><div class="kpi-label">Target: ${kpiSettings.targetParticipation}</div><div class="kpi-progress"><div class="kpi-progress-bar ${getProgressClass(Math.min(avgParticipants / kpiSettings.targetParticipation * 100, 100))}" style="width: ${Math.min(avgParticipants / kpiSettings.targetParticipation * 100, 100)}%"></div></div></div><div class="kpi-card"><div class="kpi-card-header"><h3>Kualitas</h3><div class="kpi-icon"><i class="fas fa-star"></i></div></div><div class="kpi-value">${avgQuality}/10</div><div class="kpi-label">Target: ${kpiSettings.targetQuality}/10</div><div class="kpi-progress"><div class="kpi-progress-bar ${getProgressClass((avgQuality / 10) * 100)}" style="width: ${(avgQuality / 10) * 100}%"></div></div></div>`;
+const container = document.getElementById('kpiDashboard');
+const completionRate = programsData.length > 0 ? Math.round((programsData.filter(p => p.kpi?.status === 'completed').length / programsData.length) * 100) : 0;
+const timelinessRate = programsData.length > 0 ? Math.round((programsData.filter(p => p.kpi?.status !== 'delayed').length / programsData.length) * 100) : 0;
+const avgParticipants = programsData.filter(p => p.kpi?.participants > 0).length > 0 ? Math.round(programsData.reduce((sum, p) => sum + (p.kpi?.participants || 0), 0) / programsData.filter(p => p.kpi?.participants > 0).length) : 0;
+const avgQuality = programsData.filter(p => p.kpi?.quality > 0).length > 0 ? (programsData.reduce((sum, p) => sum + (p.kpi?.quality || 0), 0) / programsData.filter(p => p.kpi?.quality > 0).length).toFixed(1) : 0;
+container.innerHTML = `<div class="kpi-card"><div class="kpi-card-header"><h3>Penyelesaian</h3><div class="kpi-icon"><i class="fas fa-check-circle"></i></div></div><div class="kpi-value">${completionRate}%</div><div class="kpi-label">Target: ${kpiSettings.targetCompletion}%</div><div class="kpi-progress"><div class="kpi-progress-bar ${getProgressClass(completionRate)}" style="width: ${completionRate}%"></div></div></div><div class="kpi-card"><div class="kpi-card-header"><h3>Ketepatan Waktu</h3><div class="kpi-icon"><i class="fas fa-clock"></i></div></div><div class="kpi-value">${timelinessRate}%</div><div class="kpi-label">Target: ${kpiSettings.targetTimeliness}%</div><div class="kpi-progress"><div class="kpi-progress-bar ${getProgressClass(timelinessRate)}" style="width: ${timelinessRate}%"></div></div></div><div class="kpi-card"><div class="kpi-card-header"><h3>Partisipasi</h3><div class="kpi-icon"><i class="fas fa-users"></i></div></div><div class="kpi-value">${avgParticipants}</div><div class="kpi-label">Target: ${kpiSettings.targetParticipation}</div><div class="kpi-progress"><div class="kpi-progress-bar ${getProgressClass(Math.min(avgParticipants / kpiSettings.targetParticipation * 100, 100))}" style="width: ${Math.min(avgParticipants / kpiSettings.targetParticipation * 100, 100)}%"></div></div></div><div class="kpi-card"><div class="kpi-card-header"><h3>Kualitas</h3><div class="kpi-icon"><i class="fas fa-star"></i></div></div><div class="kpi-value">${avgQuality}/10</div><div class="kpi-label">Target: ${kpiSettings.targetQuality}/10</div><div class="kpi-progress"><div class="kpi-progress-bar ${getProgressClass((avgQuality / 10) * 100)}" style="width: ${(avgQuality / 10) * 100}%"></div></div></div>`;
 }
 
 function getProgressClass(value) { if (value < 50) return 'low'; if (value < 80) return 'medium'; return 'high'; }
 
 function renderKpiChart() {
-  const container = document.getElementById('kpiChart'), categories = ['A', 'B', 'C', 'D'], categoryNames = {'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik'};
-  const categoryProgress = {};
-  categories.forEach(cat => { const catPrograms = programsData.filter(p => p.category === cat); categoryProgress[cat] = catPrograms.length > 0 ? Math.round(catPrograms.reduce((sum, p) => sum + (p.kpi?.progress || 0), 0) / catPrograms.length) : 0; });
-  const maxProgress = Math.max(...Object.values(categoryProgress), 100);
-  container.innerHTML = categories.map(cat => `<div class="kpi-bar" style="height: ${(categoryProgress[cat] / maxProgress) * 250}px;"><span class="kpi-bar-value">${categoryProgress[cat]}%</span><span class="kpi-bar-label">${cat}</span></div>`).join('');
+const container = document.getElementById('kpiChart'), categories = ['A', 'B', 'C', 'D'], categoryNames = {'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik'};
+const categoryProgress = {};
+categories.forEach(cat => { const catPrograms = programsData.filter(p => p.category === cat); categoryProgress[cat] = catPrograms.length > 0 ? Math.round(catPrograms.reduce((sum, p) => sum + (p.kpi?.progress || 0), 0) / catPrograms.length) : 0; });
+const maxProgress = Math.max(...Object.values(categoryProgress), 100);
+container.innerHTML = categories.map(cat => `<div class="kpi-bar" style="height: ${(categoryProgress[cat] / maxProgress) * 250}px;"><span class="kpi-bar-value">${categoryProgress[cat]}%</span><span class="kpi-bar-label">${cat}</span></div>`).join('');
 }
 
 function renderKpiProgramList() {
-  document.getElementById('kpiProgramList').innerHTML = programsData.map(p => {
-    const statusClass = p.kpi?.status || 'not-started';
-    const statusText = {'not-started': 'Belum Dimulai', 'in-progress': 'Sedang Berjalan', 'completed': 'Selesai', 'delayed': 'Terlambat'}[statusClass];
-    return `<div class="kpi-program-item"><div class="kpi-program-info"><h4>${p.title}</h4><p>${p.category} - ${p.date}</p></div><div class="kpi-program-status"><span class="kpi-status-badge ${statusClass}">${statusText}</span><div class="kpi-program-progress"><div class="kpi-progress"><div class="kpi-progress-bar ${getProgressClass(p.kpi?.progress || 0)}" style="width: ${p.kpi?.progress || 0}%"></div></div><span>${p.kpi?.progress || 0}%</span></div>${currentRole !== 'viewer' ? `<button class="btn btn-purple" style="padding: 5px 10px; font-size: 0.75rem;" onclick="openKpiProgramModal(${p.id})"><i class="fas fa-edit"></i> Update</button>` : ''}</div></div>`;
-  }).join('');
+document.getElementById('kpiProgramList').innerHTML = programsData.map(p => {
+const statusClass = p.kpi?.status || 'not-started';
+const statusText = {'not-started': 'Belum Dimulai', 'in-progress': 'Sedang Berjalan', 'completed': 'Selesai', 'delayed': 'Terlambat'}[statusClass];
+return `<div class="kpi-program-item"><div class="kpi-program-info"><h4>${p.title}</h4><p>${p.category} - ${p.date}</p></div><div class="kpi-program-status"><span class="kpi-status-badge ${statusClass}">${statusText}</span><div class="kpi-program-progress"><div class="kpi-progress"><div class="kpi-progress-bar ${getProgressClass(p.kpi?.progress || 0)}" style="width: ${p.kpi?.progress || 0}%"></div></div><span>${p.kpi?.progress || 0}%</span></div>${currentRole !== 'viewer' ? `<button class="btn btn-purple" style="padding: 5px 10px; font-size: 0.75rem;" onclick="openKpiProgramModal(${p.id})"><i class="fas fa-edit"></i> Update</button>` : ''}</div></div>`;
+}).join('');
 }
 
 function renderKpiSummary() {
-  const completed = programsData.filter(p => p.kpi?.status === 'completed').length, inProgress = programsData.filter(p => p.kpi?.status === 'in-progress').length, notStarted = programsData.filter(p => p.kpi?.status === 'not-started' || !p.kpi).length, delayed = programsData.filter(p => p.kpi?.status === 'delayed').length;
-  document.getElementById('kpiSummary').innerHTML = `<div class="kpi-summary-item"><i class="fas fa-check-circle"></i><h4>${completed}</h4><p>Selesai</p></div><div class="kpi-summary-item"><i class="fas fa-spinner"></i><h4>${inProgress}</h4><p>Berjalan</p></div><div class="kpi-summary-item"><i class="fas fa-clock"></i><h4>${notStarted}</h4><p>Belum Mulai</p></div><div class="kpi-summary-item"><i class="fas fa-exclamation-triangle"></i><h4>${delayed}</h4><p>Terlambat</p></div>`;
+const completed = programsData.filter(p => p.kpi?.status === 'completed').length, inProgress = programsData.filter(p => p.kpi?.status === 'in-progress').length, notStarted = programsData.filter(p => p.kpi?.status === 'not-started' || !p.kpi).length, delayed = programsData.filter(p => p.kpi?.status === 'delayed').length;
+document.getElementById('kpiSummary').innerHTML = `<div class="kpi-summary-item"><i class="fas fa-check-circle"></i><h4>${completed}</h4><p>Selesai</p></div><div class="kpi-summary-item"><i class="fas fa-spinner"></i><h4>${inProgress}</h4><p>Berjalan</p></div><div class="kpi-summary-item"><i class="fas fa-clock"></i><h4>${notStarted}</h4><p>Belum Mulai</p></div><div class="kpi-summary-item"><i class="fas fa-exclamation-triangle"></i><h4>${delayed}</h4><p>Terlambat</p></div>`;
 }
 
 function openKpiSettingsModal() { if (currentRole !== 'admin') { showToast('Akses ditolak! Hanya Admin.', 'error'); return; } document.getElementById('kpiTargetCompletion').value = kpiSettings.targetCompletion; document.getElementById('kpiTargetTimeliness').value = kpiSettings.targetTimeliness; document.getElementById('kpiTargetParticipation').value = kpiSettings.targetParticipation; document.getElementById('kpiTargetQuality').value = kpiSettings.targetQuality; document.getElementById('kpiWeightCompletion').value = kpiSettings.weights.completion; document.getElementById('kpiWeightTimeliness').value = kpiSettings.weights.timeliness; document.getElementById('kpiWeightParticipation').value = kpiSettings.weights.participation; document.getElementById('kpiWeightQuality').value = kpiSettings.weights.quality; document.getElementById('kpiSettingsModal').style.display = 'flex'; }
 function closeKpiSettingsModal() { document.getElementById('kpiSettingsModal').style.display = 'none'; }
 
 document.getElementById('kpiSettingsForm').addEventListener('submit', async function(e) {
-  e.preventDefault(); if (currentRole !== 'admin') { showToast('Akses ditolak!', 'error'); return; }
-  const totalWeight = parseInt(document.getElementById('kpiWeightCompletion').value) + parseInt(document.getElementById('kpiWeightTimeliness').value) + parseInt(document.getElementById('kpiWeightParticipation').value) + parseInt(document.getElementById('kpiWeightQuality').value);
-  if (totalWeight !== 100) { showToast('Total bobot harus 100%!', 'error'); return; }
-  kpiSettings = { targetCompletion: parseInt(document.getElementById('kpiTargetCompletion').value), targetTimeliness: parseInt(document.getElementById('kpiTargetTimeliness').value), targetParticipation: parseInt(document.getElementById('kpiTargetParticipation').value), targetQuality: parseInt(document.getElementById('kpiTargetQuality').value), weights: { completion: parseInt(document.getElementById('kpiWeightCompletion').value), timeliness: parseInt(document.getElementById('kpiWeightTimeliness').value), participation: parseInt(document.getElementById('kpiWeightParticipation').value), quality: parseInt(document.getElementById('kpiWeightQuality').value) } };
-  await saveToFirebase('kpi', kpiSettings, 'gsm_settings');
-  renderKpiDashboard(); closeKpiSettingsModal(); showToast('KPI disimpan!', 'success');
+e.preventDefault(); if (currentRole !== 'admin') { showToast('Akses ditolak!', 'error'); return; }
+const totalWeight = parseInt(document.getElementById('kpiWeightCompletion').value) + parseInt(document.getElementById('kpiWeightTimeliness').value) + parseInt(document.getElementById('kpiWeightParticipation').value) + parseInt(document.getElementById('kpiWeightQuality').value);
+if (totalWeight !== 100) { showToast('Total bobot harus 100%!', 'error'); return; }
+kpiSettings = { targetCompletion: parseInt(document.getElementById('kpiTargetCompletion').value), targetTimeliness: parseInt(document.getElementById('kpiTargetTimeliness').value), targetParticipation: parseInt(document.getElementById('kpiTargetParticipation').value), targetQuality: parseInt(document.getElementById('kpiTargetQuality').value), weights: { completion: parseInt(document.getElementById('kpiWeightCompletion').value), timeliness: parseInt(document.getElementById('kpiWeightTimeliness').value), participation: parseInt(document.getElementById('kpiWeightParticipation').value), quality: parseInt(document.getElementById('kpiWeightQuality').value) } };
+await saveToFirebase('kpi', kpiSettings, 'gsm_settings');
+renderKpiDashboard(); closeKpiSettingsModal(); showToast('KPI disimpan!', 'success');
 });
 
 function openKpiProgramModal(id) { if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; } const program = programsData.find(p => p.id === id); if (!program) return; document.getElementById('kpiProgramId').value = program.id; document.getElementById('kpiProgramName').textContent = program.title; document.getElementById('kpiProgramStatus').value = program.kpi?.status || 'not-started'; document.getElementById('kpiProgramProgress').value = program.kpi?.progress || 0; document.getElementById('kpiProgramParticipants').value = program.kpi?.participants || 0; document.getElementById('kpiProgramQuality').value = program.kpi?.quality || 5; document.getElementById('kpiProgramNotes').value = program.kpi?.notes || ''; document.getElementById('kpiProgramModal').style.display = 'flex'; }
 function closeKpiProgramModal() { document.getElementById('kpiProgramModal').style.display = 'none'; }
 
 document.getElementById('kpiProgramForm').addEventListener('submit', async function(e) {
-  e.preventDefault(); if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
-  const id = parseInt(document.getElementById('kpiProgramId').value), index = programsData.findIndex(p => p.id === id);
-  if (index === -1) return;
-  programsData[index].kpi = { status: document.getElementById('kpiProgramStatus').value, progress: parseInt(document.getElementById('kpiProgramProgress').value), participants: parseInt(document.getElementById('kpiProgramParticipants').value), quality: parseInt(document.getElementById('kpiProgramQuality').value), notes: document.getElementById('kpiProgramNotes').value };
-  await saveToFirebase('programs', programsData);
-  renderKpiDashboard(); renderAllPrograms('all'); closeKpiProgramModal(); showToast('Progress disimpan!', 'success');
+e.preventDefault(); if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
+const id = parseInt(document.getElementById('kpiProgramId').value), index = programsData.findIndex(p => p.id === id);
+if (index === -1) return;
+programsData[index].kpi = { status: document.getElementById('kpiProgramStatus').value, progress: parseInt(document.getElementById('kpiProgramProgress').value), participants: parseInt(document.getElementById('kpiProgramParticipants').value), quality: parseInt(document.getElementById('kpiProgramQuality').value), notes: document.getElementById('kpiProgramNotes').value };
+await saveToFirebase('programs', programsData);
+renderKpiDashboard(); renderAllPrograms('all'); closeKpiProgramModal(); showToast('Progress disimpan!', 'success');
 });
 
 function refreshKpiData() { renderKpiDashboard(); showToast('KPI di-refresh!', 'info'); }
@@ -1088,30 +1088,30 @@ function handleEditFileSelect(event) { const file = event.target.files[0]; if (f
 function fileToBase64(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); }); }
 
 document.getElementById('uploadNotulenForm').addEventListener('submit', async function(e) {
-  e.preventDefault(); if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; } if (!selectedFile) { showToast('Upload file!', 'error'); return; }
-  try {
-    const base64File = await fileToBase64(selectedFile);
-    const newNotulen = { id: Date.now(), title: document.getElementById('notulenTitle').value, date: document.getElementById('notulenDate').value, meetingId: document.getElementById('notulenMeetingId').value, description: document.getElementById('notulenDescription').value, fileName: selectedFile.name, fileType: selectedFile.type, fileSize: selectedFile.size, fileData: base64File, status: document.getElementById('notulenStatus').value, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
-    notulenData.push(newNotulen);
-    await saveToFirebase('notulen', notulenData);
-    renderNotulenList(); renderMeetings(); updateStats(); closeUploadNotulenModal(); showToast('Notulen diupload!', 'success');
-  } catch (error) { console.error('Upload error:', error); showToast('Gagal upload!', 'error'); }
+e.preventDefault(); if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; } if (!selectedFile) { showToast('Upload file!', 'error'); return; }
+try {
+const base64File = await fileToBase64(selectedFile);
+const newNotulen = { id: Date.now(), title: document.getElementById('notulenTitle').value, date: document.getElementById('notulenDate').value, meetingId: document.getElementById('notulenMeetingId').value, description: document.getElementById('notulenDescription').value, fileName: selectedFile.name, fileType: selectedFile.type, fileSize: selectedFile.size, fileData: base64File, status: document.getElementById('notulenStatus').value, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+notulenData.push(newNotulen);
+await saveToFirebase('notulen', notulenData);
+renderNotulenList(); renderMeetings(); updateStats(); closeUploadNotulenModal(); showToast('Notulen diupload!', 'success');
+} catch (error) { console.error('Upload error:', error); showToast('Gagal upload!', 'error'); }
 });
 
 function openEditNotulenModal(id) { if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; } const notulen = notulenData.find(n => n.id === id); if (!notulen) return; document.getElementById('editNotulenId').value = notulen.id; document.getElementById('editNotulenTitle').value = notulen.title; document.getElementById('editNotulenDate').value = notulen.date; document.getElementById('editNotulenDescription').value = notulen.description || ''; document.getElementById('currentFileName').textContent = `📄 ${notulen.fileName || 'notulen.pdf'} (${(notulen.fileSize / 1024).toFixed(1)} KB)`; document.getElementById('editNotulenStatus').value = notulen.status; document.getElementById('editSelectedFileName').textContent = ''; editSelectedFile = null; document.getElementById('editNotulenModal').style.display = 'flex'; }
 function closeEditNotulenModal() { document.getElementById('editNotulenModal').style.display = 'none'; }
 
 document.getElementById('editNotulenForm').addEventListener('submit', async function(e) {
-  e.preventDefault(); if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
-  const id = parseInt(document.getElementById('editNotulenId').value), index = notulenData.findIndex(n => n.id === id);
-  if (index === -1) return;
-  try {
-    let fileData = notulenData[index].fileData, fileName = notulenData[index].fileName, fileType = notulenData[index].fileType, fileSize = notulenData[index].fileSize;
-    if (editSelectedFile) { fileData = await fileToBase64(editSelectedFile); fileName = editSelectedFile.name; fileType = editSelectedFile.type; fileSize = editSelectedFile.size; }
-    notulenData[index] = { ...notulenData[index], title: document.getElementById('editNotulenTitle').value, date: document.getElementById('editNotulenDate').value, description: document.getElementById('editNotulenDescription').value, fileName, fileType, fileSize, fileData, status: document.getElementById('editNotulenStatus').value, updatedAt: new Date().toISOString() };
-    await saveToFirebase('notulen', notulenData);
-    renderNotulenList(); renderMeetings(); updateStats(); closeEditNotulenModal(); showToast('Notulen diupdate!', 'success');
-  } catch (error) { console.error('Edit error:', error); showToast('Gagal update!', 'error'); }
+e.preventDefault(); if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
+const id = parseInt(document.getElementById('editNotulenId').value), index = notulenData.findIndex(n => n.id === id);
+if (index === -1) return;
+try {
+let fileData = notulenData[index].fileData, fileName = notulenData[index].fileName, fileType = notulenData[index].fileType, fileSize = notulenData[index].fileSize;
+if (editSelectedFile) { fileData = await fileToBase64(editSelectedFile); fileName = editSelectedFile.name; fileType = editSelectedFile.type; fileSize = editSelectedFile.size; }
+notulenData[index] = { ...notulenData[index], title: document.getElementById('editNotulenTitle').value, date: document.getElementById('editNotulenDate').value, description: document.getElementById('editNotulenDescription').value, fileName, fileType, fileSize, fileData, status: document.getElementById('editNotulenStatus').value, updatedAt: new Date().toISOString() };
+await saveToFirebase('notulen', notulenData);
+renderNotulenList(); renderMeetings(); updateStats(); closeEditNotulenModal(); showToast('Notulen diupdate!', 'success');
+} catch (error) { console.error('Edit error:', error); showToast('Gagal update!', 'error'); }
 });
 
 function downloadNotulen(id) { const notulen = notulenData.find(n => n.id === id); if (!notulen) return; if (notulen.status !== 'published' && currentRole === 'viewer') { showToast('Belum tersedia!', 'error'); return; } try { const link = document.createElement('a'); link.href = notulen.fileData; link.download = notulen.fileName || 'notulen.pdf'; link.click(); showToast('Download dimulai!', 'info'); } catch (error) { showToast('Gagal download!', 'error'); } }
@@ -1127,21 +1127,21 @@ function closeEditModal() { document.getElementById('editModal').style.display =
 function deleteItem(id, type) { if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; } if (!confirm('Hapus item?')) return; if (type === 'program') { programsData = programsData.filter(p => p.id !== id); saveToFirebase('programs', programsData); } else if (type === 'finance') { financeData = financeData.filter(f => f.id !== id); saveToFirebase('finance', financeData); } else { meetingsData = meetingsData.filter(m => m.id !== id); saveToFirebase('meetings', meetingsData); } renderAllPrograms('all'); renderFinanceTable(); renderMeetings(); renderKpiDashboard(); showToast('Item dihapus!', 'success'); }
 
 document.getElementById('editForm').addEventListener('submit', async function(e) {
-  e.preventDefault(); if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
-  const id = document.getElementById('editId').value, type = document.getElementById('editType').value, title = document.getElementById('editTitle').value, category = document.getElementById('editCategory').value, date = document.getElementById('editDate').value, location = document.getElementById('editLocation').value, outcome = document.getElementById('editOutcome').value, impact = document.getElementById('editImpact').value, method = document.getElementById('editMethod').value;
-  if (id) {
-    if (type === 'program') { const index = programsData.findIndex(p => p.id == id); if (index !== -1) { programsData[index] = { ...programsData[index], title, category, date, location, outcome, impact, method }; await saveToFirebase('programs', programsData); } }
-    else if (type === 'finance') { const index = financeData.findIndex(f => f.id == id); if (index !== -1) { financeData[index] = { ...financeData[index], title, outcome, impact, execution: date }; await saveToFirebase('finance', financeData); } }
-    else { const index = meetingsData.findIndex(m => m.id == id); if (index !== -1) { meetingsData[index] = { ...meetingsData[index], title, outcome, impact, execution: date }; await saveToFirebase('meetings', meetingsData); } }
-    showToast('Data diupdate!', 'success');
-  } else {
-    const newId = Date.now();
-    if (type === 'program') { const catNames = { 'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik', 'E': 'Keuangan', 'F': 'Rapat' }; programsData.push({ id: newId, category, catName: catNames[category] || 'Lainnya', title, date, location, outcome, impact, method, kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' } }); await saveToFirebase('programs', programsData); }
-    else if (type === 'finance') { financeData.push({ id: newId, title, outcome, impact, execution: date }); await saveToFirebase('finance', financeData); }
-    else { meetingsData.push({ id: newId, title, outcome, impact, execution: date }); await saveToFirebase('meetings', meetingsData); }
-    showToast('Data ditambahkan!', 'success');
-  }
-  renderAllPrograms('all'); renderFinanceTable(); renderMeetings(); renderKpiDashboard(); closeEditModal();
+e.preventDefault(); if (currentRole === 'viewer') { showToast('Akses ditolak!', 'error'); return; }
+const id = document.getElementById('editId').value, type = document.getElementById('editType').value, title = document.getElementById('editTitle').value, category = document.getElementById('editCategory').value, date = document.getElementById('editDate').value, location = document.getElementById('editLocation').value, outcome = document.getElementById('editOutcome').value, impact = document.getElementById('editImpact').value, method = document.getElementById('editMethod').value;
+if (id) {
+if (type === 'program') { const index = programsData.findIndex(p => p.id == id); if (index !== -1) { programsData[index] = { ...programsData[index], title, category, date, location, outcome, impact, method }; await saveToFirebase('programs', programsData); } }
+else if (type === 'finance') { const index = financeData.findIndex(f => f.id == id); if (index !== -1) { financeData[index] = { ...financeData[index], title, outcome, impact, execution: date }; await saveToFirebase('finance', financeData); } }
+else { const index = meetingsData.findIndex(m => m.id == id); if (index !== -1) { meetingsData[index] = { ...meetingsData[index], title, outcome, impact, execution: date }; await saveToFirebase('meetings', meetingsData); } }
+showToast('Data diupdate!', 'success');
+} else {
+const newId = Date.now();
+if (type === 'program') { const catNames = { 'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik', 'E': 'Keuangan', 'F': 'Rapat' }; programsData.push({ id: newId, category, catName: catNames[category] || 'Lainnya', title, date, location, outcome, impact, method, kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' } }); await saveToFirebase('programs', programsData); }
+else if (type === 'finance') { financeData.push({ id: newId, title, outcome, impact, execution: date }); await saveToFirebase('finance', financeData); }
+else { meetingsData.push({ id: newId, title, outcome, impact, execution: date }); await saveToFirebase('meetings', meetingsData); }
+showToast('Data ditambahkan!', 'success');
+}
+renderAllPrograms('all'); renderFinanceTable(); renderMeetings(); renderKpiDashboard(); closeEditModal();
 });
 
 // ==================== LOGIN FUNCTIONS ====================
@@ -1149,30 +1149,25 @@ function openLoginModal() { document.getElementById('loginModal').style.display 
 function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
 
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const username = document.getElementById('adminUsername').value.trim(), password = document.getElementById('adminPassword').value;
-  
-  const snapshot = await db.collection('gsm_users').where('username', '==', username).where('password', '==', password).where('status', '==', 'active').get();
-  
-  if (!snapshot.empty) {
-    const user = snapshot.docs[0].data();
-    currentUser = { id: snapshot.docs[0].id, ...user };
-    currentRole = user.role;
-    showAdminMode();
-    closeLoginModal();
-    document.getElementById('loginForm').reset();
-  } else {
-    showToast('Username/password salah!', 'error');
-  }
+e.preventDefault();
+const username = document.getElementById('adminUsername').value.trim(), password = document.getElementById('adminPassword').value;
+const snapshot = await db.collection('gsm_users').where('username', '==', username).where('password', '==', password).where('status', '==', 'active').get();
+if (!snapshot.empty) {
+const user = snapshot.docs[0].data();
+currentUser = { id: snapshot.docs[0].id, ...user };
+currentRole = user.role;
+showAdminMode();
+closeLoginModal();
+document.getElementById('loginForm').reset();
+} else {
+showToast('Username/password salah!', 'error');
+}
 });
 
 // ==================== UTILITY FUNCTIONS ====================
 function formatDate(dateString) { const options = { year: 'numeric', month: 'long', day: 'numeric' }; return new Date(dateString).toLocaleDateString('id-ID', options); }
-
 function showToast(message, type = 'success') { const toast = document.getElementById('toast'); toast.textContent = message; toast.className = 'toast show ' + type; setTimeout(() => { toast.classList.remove('show'); }, 3000); }
-
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeViewModalDirect(); closeEditModal(); closeFinanceModal(); closeUploadNotulenModal(); closeEditNotulenModal(); closeKpiSettingsModal(); closeKpiProgramModal(); closeLoginModal(); closeUserModal(); } });
-
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
