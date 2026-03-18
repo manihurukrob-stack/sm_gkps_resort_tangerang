@@ -1880,7 +1880,7 @@
                         <label>Metode/Pelaksana</label>
                         <textarea id="editMethod"></textarea>
                     </div>
-
+                    
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
@@ -2201,12 +2201,13 @@
             appId: "1:6039178513:web:f064f5872e80ac0a4650b0"
         };
 
+        // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
 
-        // ==================== DEFAULT DATA ====================
+        // ==================== DEFAULT DATA (FULL) ====================
         const defaultPrograms = [
             {
                 id: 1, category: 'A', catName: 'Persekutuan',
@@ -2445,12 +2446,14 @@
         let selectedFile = null;
         let editSelectedFile = null;
 
+        // Admin Credentials
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'gsm2026';
 
         const STORAGE_LIMIT = 5 * 1024 * 1024;
 
         // ==================== TEXT FORMATTER ====================
+        // FIX: Memformat teks multiline HANYA pada bagian konten data, bukan strukturnya
         function escapeHtml(unsafe) {
             return (unsafe || '').toString()
                 .replace(/&/g, "&amp;")
@@ -2464,7 +2467,7 @@
             return escapeHtml(str).replace(/(?:\r\n|\r|\n)/g, '<br>');
         }
 
-        // ==================== INITIALIZATION ====================
+        // ==================== INITIALIZATION & FIREBASE SYNC ====================
         function init() {
             setupAdminTrigger();
             checkAdminSession();
@@ -2472,6 +2475,7 @@
             // Listen to Firebase Realtime Database
             db.ref('gsm_data_2026').on('value', (snapshot) => {
                 const data = snapshot.val();
+                
                 if (data) {
                     programsData = data.programs || [];
                     financeData = data.finance || [];
@@ -2480,7 +2484,7 @@
                     kpiSettings = data.kpiSettings || {...defaultKpiSettings};
                 } else {
                     loadLocalData();
-                    saveData(); // Sync local to Firebase if empty
+                    saveData(); // Sync local to Firebase
                 }
                 
                 updateStats();
@@ -2509,27 +2513,15 @@
 
         // ==================== DATA MANAGEMENT ====================
         function loadLocalData() {
-            const storedPrograms = localStorage.getItem('gsm_programs_2026');
-            const storedFinance = localStorage.getItem('gsm_finance_2026');
-            const storedMeetings = localStorage.getItem('gsm_meetings_2026');
-            const storedNotulen = localStorage.getItem('gsm_notulen_2026');
-            const storedKpiSettings = localStorage.getItem('gsm_kpi_settings_2026');
-
-            programsData = storedPrograms ? JSON.parse(storedPrograms) : [...defaultPrograms];
-            financeData = storedFinance ? JSON.parse(storedFinance) : [...defaultFinance];
-            meetingsData = storedMeetings ? JSON.parse(storedMeetings) : [...defaultMeetings];
-            notulenData = storedNotulen ? JSON.parse(storedNotulen) : [];
-            kpiSettings = storedKpiSettings ? JSON.parse(storedKpiSettings) : {...defaultKpiSettings};
+            programsData = [...defaultPrograms];
+            financeData = [...defaultFinance];
+            meetingsData = [...defaultMeetings];
+            notulenData = [];
+            kpiSettings = {...defaultKpiSettings};
         }
 
         function saveData() {
             try {
-                localStorage.setItem('gsm_programs_2026', JSON.stringify(programsData));
-                localStorage.setItem('gsm_finance_2026', JSON.stringify(financeData));
-                localStorage.setItem('gsm_meetings_2026', JSON.stringify(meetingsData));
-                localStorage.setItem('gsm_notulen_2026', JSON.stringify(notulenData));
-                localStorage.setItem('gsm_kpi_settings_2026', JSON.stringify(kpiSettings));
-                
                 // Push to Firebase Realtime Database
                 db.ref('gsm_data_2026').set({
                     programs: programsData,
@@ -2543,69 +2535,30 @@
                 updateStorageWarning();
                 return true;
             } catch (e) {
-                if (e.name === 'QuotaExceededError') {
-                    showToast('Penyimpanan penuh! Hapus file yang tidak diperlukan.', 'error');
-                    return false;
-                }
+                console.error("Save failed", e);
                 return false;
             }
         }
 
         function resetData() {
             if (confirm('Apakah Anda yakin ingin mereset semua data ke default? Semua perubahan dan notulen akan hilang!')) {
-                localStorage.removeItem('gsm_programs_2026');
-                localStorage.removeItem('gsm_finance_2026');
-                localStorage.removeItem('gsm_meetings_2026');
-                localStorage.removeItem('gsm_notulen_2026');
-                localStorage.removeItem('gsm_kpi_settings_2026');
-                
                 // Reset Firebase
-                db.ref('gsm_data_2026').remove();
-                
-                loadLocalData();
-                renderAllPrograms('all');
-                renderFinanceTable();
-                renderMeetings();
-                renderNotulenList();
-                updateStats();
-                showToast('Data berhasil direset!', 'success');
+                db.ref('gsm_data_2026').remove().then(() => {
+                    loadLocalData();
+                    saveData(); // Push defaults to Firebase
+                    showToast('Data berhasil direset!', 'success');
+                });
             }
         }
 
         // ==================== STORAGE MANAGEMENT ====================
         function getStorageUsage() {
-            let total = 0;
-            for (let key in localStorage) {
-                if (localStorage.hasOwnProperty(key)) {
-                    total += localStorage[key].length * 2;
-                }
-            }
-            return total;
+            return 0; // Not critical anymore since we use Firebase
         }
 
         function updateStorageWarning() {
-            const used = getStorageUsage();
-            const percentage = (used / STORAGE_LIMIT) * 100;
             const warning = document.getElementById('storageWarning');
-            const progressBar = document.getElementById('storageProgressBar');
-            const storageUsed = document.getElementById('storageUsed');
-
-            storageUsed.textContent = (used / 1024 / 1024).toFixed(2) + ' MB';
-
-            if (percentage > 70) {
-                warning.classList.add('show');
-                progressBar.style.width = percentage + '%';
-                
-                if (percentage > 90) {
-                    progressBar.style.background = 'var(--danger)';
-                } else {
-                    progressBar.style.background = 'var(--warning)';
-                }
-            } else {
-                warning.classList.remove('show');
-                progressBar.style.width = percentage + '%';
-                progressBar.style.background = 'var(--success)';
-            }
+            warning.classList.remove('show');
         }
 
         // ==================== ADMIN MANAGEMENT ====================
@@ -2676,7 +2629,6 @@
             isAdmin = true;
             sessionStorage.setItem('gsm_admin_session', 'true');
             renderKpiDashboard();
-            showToast('Login berhasil! Mode Admin aktif', 'success');
         }
 
         function hideAdminMode() {
@@ -2722,7 +2674,6 @@
 
         // ==================== VIEW MANAGEMENT ====================
         function showView(viewId) {
-            // Prevent accessing KPI view without admin
             if (viewId === 'kpi' && !isAdmin) {
                 showToast('Akses ditolak! Fitur KPI hanya untuk admin.', 'error');
                 return;
@@ -2754,18 +2705,15 @@
             document.getElementById('totalCategories').textContent = categories.length;
             document.getElementById('totalNotulen').textContent = notulenData.filter(n => n.status === 'published').length;
             
-            // Calculate average KPI score
             const avgScore = calculateAverageKpi();
             document.getElementById('avgKpiScore').textContent = avgScore + '%';
         }
 
         function calculateAverageKpi() {
             if (programsData.length === 0) return 0;
-            
             const totalScore = programsData.reduce((sum, p) => {
                 return sum + (p.kpi ? p.kpi.progress : 0);
             }, 0);
-            
             return Math.round(totalScore / programsData.length);
         }
 
@@ -2775,6 +2723,7 @@
             container.innerHTML = featured.map(p => createProgramCard(p)).join('');
         }
 
+        // FIX: Remove <br> tags from labels to restore original clean layout while retaining multi-line in formatText
         function createProgramCard(program) {
             return `
                 <div class="program-card" onclick="openViewModal(${program.id}, 'program')">
@@ -3253,6 +3202,8 @@
             };
 
             saveData();
+            
+            // Firebase listener will re-render, but to be sure
             renderKpiDashboard();
             
             const activeFilterBtn = document.querySelector('.filter-btn.active');
@@ -3418,11 +3369,6 @@
                     updatedAt: new Date().toISOString()
                 }).length;
 
-                if (getStorageUsage() + estimatedSize > STORAGE_LIMIT * 0.95) {
-                    showToast('Penyimpanan hampir penuh! Hapus file lama terlebih dahulu.', 'error');
-                    return;
-                }
-
                 const newNotulen = {
                     id: Date.now(),
                     title: document.getElementById('notulenTitle').value,
@@ -3441,9 +3387,6 @@
                 notulenData.push(newNotulen);
                 
                 if (saveData()) {
-                    renderNotulenList();
-                    renderMeetings();
-                    updateStats();
                     closeUploadNotulenModal();
                     showToast('Notulen berhasil diupload!', 'success');
                 }
@@ -3519,9 +3462,6 @@
                 };
 
                 if (saveData()) {
-                    renderNotulenList();
-                    renderMeetings();
-                    updateStats();
                     closeEditNotulenModal();
                     showToast('Notulen berhasil diperbarui!', 'success');
                 }
@@ -3570,9 +3510,6 @@
             if (index !== -1) {
                 notulenData.splice(index, 1);
                 saveData();
-                renderNotulenList();
-                renderMeetings();
-                updateStats();
                 showToast('Notulen berhasil dihapus!', 'success');
             }
         }
@@ -3656,41 +3593,6 @@
             document.getElementById('editModal').style.display = 'none';
         }
 
-        function deleteItem(id, type) {
-            if (!isAdmin) {
-                showToast('Anda harus login sebagai admin!', 'error');
-                return;
-            }
-
-            if (!confirm('Apakah Anda yakin ingin menghapus item ini?')) return;
-
-            const parsedId = Number(id);
-            if (type === 'program') {
-                programsData = programsData.filter(p => p.id !== parsedId);
-            } else if (type === 'finance') {
-                financeData = financeData.filter(f => f.id !== parsedId);
-            } else {
-                meetingsData = meetingsData.filter(m => m.id !== parsedId);
-            }
-
-            saveData();
-            
-            const activeFilterBtn = document.querySelector('.filter-btn.active');
-            let currentCat = 'all';
-            if (activeFilterBtn) {
-                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
-                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
-                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
-                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
-            }
-            
-            renderAllPrograms(currentCat);
-            renderFinanceTable();
-            renderMeetings();
-            renderKpiDashboard();
-            showToast('Item berhasil dihapus!', 'success');
-        }
-
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -3768,6 +3670,27 @@
             saveData();
             closeEditModal();
         });
+
+        function deleteItem(id, type) {
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin!', 'error');
+                return;
+            }
+
+            if (!confirm('Apakah Anda yakin ingin menghapus item ini?')) return;
+
+            const parsedId = Number(id);
+            if (type === 'program') {
+                programsData = programsData.filter(p => p.id !== parsedId);
+            } else if (type === 'finance') {
+                financeData = financeData.filter(f => f.id !== parsedId);
+            } else {
+                meetingsData = meetingsData.filter(m => m.id !== parsedId);
+            }
+
+            saveData();
+            showToast('Item berhasil dihapus!', 'success');
+        }
 
         // ==================== LOGIN FUNCTIONS ====================
         function openLoginModal() {
