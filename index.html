@@ -1642,21 +1642,31 @@
         /* Responsive Fixes */
         @media (max-width: 768px) {
             .header-top-wrapper {
-                gap: 15px;
+                gap: 10px;
                 flex-direction: row;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: center;
             }
 
             .logo-gkps, .logo-tema {
-                height: 70px; /* Ukuran logo lebih kecil di ponsel */
+                height: 55px;
+                flex-shrink: 0;
+            }
+            
+            .header-text {
+                flex: 1;
+                padding: 0 5px;
             }
 
             .header-text h1 {
-                font-size: 1.6rem;
+                font-size: 1.25rem;
+                line-height: 1.2;
+                margin-bottom: 2px;
             }
 
             .header p {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
             }
 
             .nav-menu {
