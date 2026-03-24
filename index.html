@@ -3907,20 +3907,26 @@
         }
 
         function openAddModal(type) {
+            if (!isAdmin) {
+                showToast('Anda harus login sebagai admin/editor!', 'error');
+                return;
+            }
+
             document.getElementById('editId').value = '';
             document.getElementById('editType').value = type;
-            document.getElementById('editModalTitle').textContent = 'Tambah ' + (type === 'program' ? 'Program' : type === 'finance' ? 'Keuangan' : 'Rapat');
-            document.getElementById('editForm').reset();
             
-            if(type === 'program') {
-                document.getElementById('groupCategory').style.display = 'block';
-                document.getElementById('groupLocation').style.display = 'block';
-                document.getElementById('groupMethod').style.display = 'block';
-            } else {
-                document.getElementById('groupCategory').style.display = 'none';
-                document.getElementById('groupLocation').style.display = 'none';
-                document.getElementById('groupMethod').style.display = 'none';
-            }
+            const titleMap = { 'program': 'Program', 'finance': 'Keuangan', 'meeting': 'Rapat' };
+            document.getElementById('editModalTitle').textContent = 'Tambah ' + titleMap[type];
+            
+            document.getElementById('editForm').reset();
+
+            const isProgram = (type === 'program');
+            const displayStyle = isProgram ? 'block' : 'none';
+            
+            // Fix bug pada kode sebelumnya (id groupCategory tidak ada)
+            document.getElementById('editCategory').parentElement.style.display = displayStyle;
+            document.getElementById('editLocation').parentElement.style.display = displayStyle;
+            document.getElementById('editMethod').parentElement.style.display = displayStyle;
 
             document.getElementById('editModal').style.display = 'flex';
         }
@@ -3945,26 +3951,27 @@
 
             document.getElementById('editId').value = item.id;
             document.getElementById('editType').value = type;
-            document.getElementById('editModalTitle').textContent = 'Edit ' + (type === 'program' ? 'Program' : type === 'finance' ? 'Keuangan' : 'Rapat');
+            const titleMap = { 'program': 'Program', 'finance': 'Keuangan', 'meeting': 'Rapat' };
+            document.getElementById('editModalTitle').textContent = 'Edit ' + titleMap[type];
             
             document.getElementById('editTitle').value = item.title;
             document.getElementById('editOutcome').value = item.outcome;
             document.getElementById('editImpact').value = item.impact;
             
-            if (type === 'program') {
-                document.getElementById('groupCategory').style.display = 'block';
-                document.getElementById('groupLocation').style.display = 'block';
-                document.getElementById('groupMethod').style.display = 'block';
-                
+            const isProgram = (type === 'program');
+            const displayStyle = isProgram ? 'block' : 'none';
+            
+            // Fix bug penyembunyian input form
+            document.getElementById('editCategory').parentElement.style.display = displayStyle;
+            document.getElementById('editLocation').parentElement.style.display = displayStyle;
+            document.getElementById('editMethod').parentElement.style.display = displayStyle;
+
+            if (isProgram) {
                 document.getElementById('editCategory').value = item.category || 'A';
                 document.getElementById('editDate').value = item.date || '';
                 document.getElementById('editLocation').value = item.location || '';
                 document.getElementById('editMethod').value = item.method || '';
             } else {
-                document.getElementById('groupCategory').style.display = 'none';
-                document.getElementById('groupLocation').style.display = 'none';
-                document.getElementById('groupMethod').style.display = 'none';
-                
                 document.getElementById('editDate').value = item.execution || '';
             }
 
@@ -3988,91 +3995,63 @@
             const title = document.getElementById('editTitle').value;
             const outcome = document.getElementById('editOutcome').value;
             const impact = document.getElementById('editImpact').value;
+            const dateVal = document.getElementById('editDate').value;
 
             if (idStr) {
+                // UPDATE (EDIT)
                 const parsedId = Number(idStr);
                 if (type === 'program') {
-                    const category = document.getElementById('editCategory').value;
-                    const date = document.getElementById('editDate').value;
-                    const location = document.getElementById('editLocation').value;
-                    const method = document.getElementById('editMethod').value;
-                    
-                    const index = programsData.findIndex(p => p.id === parsedId);
-                    if (index !== -1) {
+                    const idx = programsData.findIndex(p => p.id === parsedId);
+                    if (idx !== -1) {
+                        const cat = document.getElementById('editCategory').value;
                         const mapCat = { 'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik', 'E': 'Keuangan', 'F': 'Rapat' };
-                        programsData[index] = { ...programsData[index], title, category, catName: mapCat[category] || 'Lainnya', date, location, outcome, impact, method };
+                        programsData[idx] = { 
+                            ...programsData[idx], 
+                            title, 
+                            category: cat, 
+                            catName: mapCat[cat] || 'Lainnya', 
+                            date: dateVal, 
+                            location: document.getElementById('editLocation').value, 
+                            outcome, 
+                            impact, 
+                            method: document.getElementById('editMethod').value 
+                        };
                     }
                 } else if (type === 'finance') {
-                    const execution = document.getElementById('editDate').value;
-                    const index = financeData.findIndex(f => f.id === parsedId);
-                    if (index !== -1) {
-                        financeData[index] = { ...financeData[index], title, outcome, impact, execution };
-                    }
+                    const idx = financeData.findIndex(f => f.id === parsedId);
+                    if (idx !== -1) financeData[idx] = { ...financeData[idx], title, outcome, impact, execution: dateVal };
                 } else {
-                    const execution = document.getElementById('editDate').value;
-                    const index = meetingsData.findIndex(m => m.id === parsedId);
-                    if (index !== -1) {
-                        meetingsData[index] = { ...meetingsData[index], title, outcome, impact, execution };
-                    }
+                    const idx = meetingsData.findIndex(m => m.id === parsedId);
+                    if (idx !== -1) meetingsData[idx] = { ...meetingsData[idx], title, outcome, impact, execution: dateVal };
                 }
                 showToast('Data berhasil diperbarui!', 'success');
             } else {
+                // CREATE (TAMBAH)
                 const newId = Date.now();
                 if (type === 'program') {
-                    const category = document.getElementById('editCategory').value;
-                    const date = document.getElementById('editDate').value;
-                    const location = document.getElementById('editLocation').value;
-                    const method = document.getElementById('editMethod').value;
-                    
-                    const catNames = { 'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik', 'E': 'Keuangan', 'F': 'Rapat' };
-                    programsData.push({
-                        id: newId,
-                        category,
-                        catName: catNames[category] || 'Lainnya',
-                        title,
-                        date,
-                        location,
-                        outcome,
-                        impact,
-                        method,
-                        kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' }
+                    const cat = document.getElementById('editCategory').value;
+                    const mapCat = { 'A': 'Persekutuan', 'B': 'Kesaksian', 'C': 'Pelayanan', 'D': 'Distrik', 'E': 'Keuangan', 'F': 'Rapat' };
+                    programsData.push({ 
+                        id: newId, 
+                        category: cat, 
+                        catName: mapCat[cat] || 'Lainnya', 
+                        title, 
+                        date: dateVal, 
+                        location: document.getElementById('editLocation').value, 
+                        outcome, 
+                        impact, 
+                        method: document.getElementById('editMethod').value, 
+                        kpi: { status: 'not-started', progress: 0, participants: 0, quality: 0, notes: '' } 
                     });
                 } else if (type === 'finance') {
-                    const execution = document.getElementById('editDate').value;
-                    financeData.push({
-                        id: newId,
-                        title,
-                        outcome,
-                        impact,
-                        execution
-                    });
+                    financeData.push({ id: newId, title, outcome, impact, execution: dateVal });
                 } else {
-                    const execution = document.getElementById('editDate').value;
-                    meetingsData.push({
-                        id: newId,
-                        title,
-                        outcome,
-                        impact,
-                        execution
-                    });
+                    meetingsData.push({ id: newId, title, outcome, impact, execution: dateVal });
                 }
                 showToast('Data berhasil ditambahkan!', 'success');
             }
 
             saveData();
-            
-            const activeFilterBtn = document.querySelector('.filter-btn.active');
-            let currentCat = 'all';
-            if (activeFilterBtn) {
-                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
-                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
-                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
-                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
-            }
-            renderAllPrograms(currentCat);
-            renderFinanceTable();
-            renderMeetings();
-            
             closeEditModal();
         });
 
@@ -4094,19 +4073,6 @@
             }
 
             saveData();
-            
-            const activeFilterBtn = document.querySelector('.filter-btn.active');
-            let currentCat = 'all';
-            if (activeFilterBtn) {
-                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
-                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
-                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
-                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
-            }
-            renderAllPrograms(currentCat);
-            renderFinanceTable();
-            renderMeetings();
-            
             showToast('Item berhasil dihapus!', 'success');
         }
 
