@@ -2682,28 +2682,15 @@
             renderUI();
 
             // Dengarkan pembaruan dari Firebase Realtime Database
-            db.ref('gsm_data_2026').on('value', (snapshot) => {
-                const data = snapshot.val();
-                
-                if (data) {
-                    // Gunakan normalizeArray pada seluruh data dari Firebase
-                    programsData = normalizeArray(data.programs);
-                    financeData = normalizeArray(data.finance);
-                    meetingsData = normalizeArray(data.meetings);
-                    notulenData = normalizeArray(data.notulen);
-                    kpiSettings = data.kpiSettings || {...defaultKpiSettings};
-                    usersData = data.users ? normalizeArray(data.users) : [...defaultUsers];
-                } else {
-                    loadLocalData();
-                    saveData(); // Sinkronisasi data awal ke Firebase jika database masih kosong
-                }
-                
-                checkUserSession();
-                renderUI(); // Perbarui tabel dengan data asli dari internet
-            }, (error) => {
-                console.warn("Koneksi Firebase diblokir atau gagal:", error);
-                showToast("Mode Offline: Menampilkan data lokal", "warning");
-            });
+        db.ref('gsm_data_2026').on('value', (snapshot) => {
+            // ... (kode sinkronisasi data yang panjang) ...
+            
+            checkUserSession();
+            renderUI(); // Perbarui tabel dengan data asli dari internet
+        }, (error) => {
+            console.warn("Koneksi Firebase diblokir atau gagal:", error);
+            // showToast("Mode Offline: Menampilkan data lokal", "warning"); // <-- Tambahkan // di depannya
+        });
         }
 
         // ==================== DATA MANAGEMENT ====================
