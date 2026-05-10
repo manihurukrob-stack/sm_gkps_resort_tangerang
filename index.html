@@ -2631,50 +2631,78 @@
             return escapeHtml(str).replace(/(?:\r\n|\r|\n)/g, '<br>');
         }
 
-        // ==================== INITIALIZATION & FIREBASE SYNC ====================
+        // ==========================================================
+        // 1. TAMBAHKAN FUNGSI INI DI ATAS FUNGSI init()
+        // Fungsi ini mencegah crash jika Firebase mengubah Array menjadi Object
+        // ==========================================================
+        function normalizeArray(data) {
+            if (!data) return [];
+            if (Array.isArray(data)) return data.filter(item => item !== null && item !== undefined);
+            return Object.values(data).filter(item => item !== null && item !== undefined);
+        }
+
+        // ==========================================================
+        // 2. TAMBAHKAN FUNGSI renderUI() UNTUK MENGGAMBAR LAYAR
+        // ==========================================================
+        function renderUI() {
+            updateStats();
+            renderFeaturedPrograms();
+            
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            let currentCat = 'all';
+            if (activeFilterBtn) {
+                if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
+                else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
+                else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
+                else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
+            }
+            renderAllPrograms(currentCat);
+            
+            renderFinanceTable();
+            renderMeetings();
+            renderNotulenList();
+            updateStorageWarning();
+            
+            if (currentUserRole === 'admin') renderUsersTable();
+            if (document.getElementById('kpi').classList.contains('active') && isAdmin) {
+                renderKpiDashboard();
+            }
+        }
+
+        // ==========================================================
+        // 3. GANTI FUNGSI init() LAMA ANDA DENGAN FUNGSI INI
+        // ==========================================================
         function init() {
             setupAdminTrigger();
             
-            // Listen to Firebase Realtime Database
+            // Render layar lebih awal menggunakan data lokal/default.
+            // Ini menjamin layar TIDAK AKAN PERNAH BLANK walau Firebase lambat/gagal.
+            loadLocalData();
+            checkUserSession();
+            renderUI();
+
+            // Dengarkan pembaruan dari Firebase Realtime Database
             db.ref('gsm_data_2026').on('value', (snapshot) => {
                 const data = snapshot.val();
                 
                 if (data) {
-                    programsData = data.programs || [];
-                    financeData = data.finance || [];
-                    meetingsData = data.meetings || [];
-                    notulenData = data.notulen || [];
+                    // Gunakan normalizeArray pada seluruh data dari Firebase
+                    programsData = normalizeArray(data.programs);
+                    financeData = normalizeArray(data.finance);
+                    meetingsData = normalizeArray(data.meetings);
+                    notulenData = normalizeArray(data.notulen);
                     kpiSettings = data.kpiSettings || {...defaultKpiSettings};
-                    usersData = data.users || [...defaultUsers];
+                    usersData = data.users ? normalizeArray(data.users) : [...defaultUsers];
                 } else {
                     loadLocalData();
-                    saveData(); // Sync local to Firebase
+                    saveData(); // Sinkronisasi data awal ke Firebase jika database masih kosong
                 }
                 
                 checkUserSession();
-                
-                updateStats();
-                renderFeaturedPrograms();
-                
-                const activeFilterBtn = document.querySelector('.filter-btn.active');
-                let currentCat = 'all';
-                if (activeFilterBtn) {
-                    if (activeFilterBtn.textContent.includes('A.')) currentCat = 'A';
-                    else if (activeFilterBtn.textContent.includes('B.')) currentCat = 'B';
-                    else if (activeFilterBtn.textContent.includes('C.')) currentCat = 'C';
-                    else if (activeFilterBtn.textContent.includes('D.')) currentCat = 'D';
-                }
-                renderAllPrograms(currentCat);
-                
-                renderFinanceTable();
-                renderMeetings();
-                renderNotulenList();
-                updateStorageWarning();
-                
-                if (currentUserRole === 'admin') renderUsersTable();
-                if (document.getElementById('kpi').classList.contains('active') && isAdmin) {
-                    renderKpiDashboard();
-                }
+                renderUI(); // Perbarui tabel dengan data asli dari internet
+            }, (error) => {
+                console.warn("Koneksi Firebase diblokir atau gagal:", error);
+                showToast("Mode Offline: Menampilkan data lokal", "warning");
             });
         }
 
