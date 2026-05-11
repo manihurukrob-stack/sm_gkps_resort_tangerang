@@ -265,7 +265,7 @@
             padding: 30px 20px;
         }
 
-        /* View Toggle - Diperbarui agar tidak bocor */
+        /* View Toggle */
         .view-section {
             display: none !important; 
             animation: fadeIn 0.4s ease;
@@ -544,7 +544,7 @@
 
         .finance-table table {
             width: 100%;
-            min-width: 800px; /* Ditambahkan agar tabel tidak hancur di HP */
+            min-width: 800px;
             border-collapse: collapse;
         }
 
@@ -2632,8 +2632,7 @@
         }
 
         // ==========================================================
-        // 1. TAMBAHKAN FUNGSI INI DI ATAS FUNGSI init()
-        // Fungsi ini mencegah crash jika Firebase mengubah Array menjadi Object
+        // 1. FUNGSI UNTUK MENANGANI ERROR ARRAY (Mencegah Firebase Object/Kosong)
         // ==========================================================
         function normalizeArray(data) {
             if (!data) return [];
@@ -2642,7 +2641,7 @@
         }
 
         // ==========================================================
-        // 2. TAMBAHKAN FUNGSI renderUI() UNTUK MENGGAMBAR LAYAR
+        // 2. FUNGSI RENDER UTAMA UNTUK UPDATE LAYAR
         // ==========================================================
         function renderUI() {
             updateStats();
@@ -2670,27 +2669,40 @@
         }
 
         // ==========================================================
-        // 3. GANTI FUNGSI init() LAMA ANDA DENGAN FUNGSI INI
+        // 3. FUNGSI INIT (DENGAN SINKRONISASI FIREBASE YANG DIPERBAIKI)
         // ==========================================================
         function init() {
             setupAdminTrigger();
             
-            // Render layar lebih awal menggunakan data lokal/default.
-            // Ini menjamin layar TIDAK AKAN PERNAH BLANK walau Firebase lambat/gagal.
+            // Render layar di awal menggunakan data default agar tidak blank
             loadLocalData();
             checkUserSession();
             renderUI();
 
-            // Dengarkan pembaruan dari Firebase Realtime Database
-        db.ref('gsm_data_2026').on('value', (snapshot) => {
-            // ... (kode sinkronisasi data yang panjang) ...
-            
-            checkUserSession();
-            renderUI(); // Perbarui tabel dengan data asli dari internet
-        }, (error) => {
-            console.warn("Koneksi Firebase diblokir atau gagal:", error);
-            // showToast("Mode Offline: Menampilkan data lokal", "warning"); // <-- Tambahkan // di depannya
-        });
+            // Dengarkan pembaruan secara real-time dari Firebase
+            db.ref('gsm_data_2026').on('value', (snapshot) => {
+                const data = snapshot.val();
+                
+                // Menerapkan update data dari server & menangkal error "kosong/objek rusak"
+                if (data) {
+                    programsData = data.programs ? normalizeArray(data.programs) : [...defaultPrograms];
+                    financeData = data.finance ? normalizeArray(data.finance) : [...defaultFinance];
+                    meetingsData = data.meetings ? normalizeArray(data.meetings) : [...defaultMeetings];
+                    notulenData = data.notulen ? normalizeArray(data.notulen) : [];
+                    kpiSettings = data.kpiSettings || {...defaultKpiSettings};
+                    usersData = data.users ? normalizeArray(data.users) : [...defaultUsers];
+                } else {
+                    // Jika data di database kosong sama sekali, simpan data default
+                    loadLocalData();
+                    saveData();
+                }
+                
+                checkUserSession();
+                renderUI(); // Perbarui tabel dengan data asli dari internet
+            }, (error) => {
+                console.warn("Koneksi Firebase diblokir atau gagal:", error);
+                showToast("Mode Offline: Menampilkan data lokal (Gagal terhubung ke database)", "warning"); 
+            });
         }
 
         // ==================== DATA MANAGEMENT ====================
@@ -3938,7 +3950,6 @@
             const isProgram = (type === 'program');
             const displayStyle = isProgram ? 'block' : 'none';
             
-            // Fix bug pada kode sebelumnya (id groupCategory tidak ada)
             document.getElementById('editCategory').parentElement.style.display = displayStyle;
             document.getElementById('editLocation').parentElement.style.display = displayStyle;
             document.getElementById('editMethod').parentElement.style.display = displayStyle;
@@ -3976,7 +3987,6 @@
             const isProgram = (type === 'program');
             const displayStyle = isProgram ? 'block' : 'none';
             
-            // Fix bug penyembunyian input form
             document.getElementById('editCategory').parentElement.style.display = displayStyle;
             document.getElementById('editLocation').parentElement.style.display = displayStyle;
             document.getElementById('editMethod').parentElement.style.display = displayStyle;
