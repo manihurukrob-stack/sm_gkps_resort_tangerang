@@ -1714,12 +1714,12 @@
 
     <header class="header">
         <div class="header-top-wrapper">
-            <img src="LOGO-GKPS-ASLI-1.png" alt="Logo GKPS" class="logo-gkps">
+            <img src="LOGO-GKPS-ASLI-1.png" alt="Logo GKPS" class="logo-gkps" onerror="this.src='https://via.placeholder.com/110?text=GKPS'">
             <div class="header-text">
                 <h1>GSM Planner 2026</h1>
                 <p>GKPS Resort Tangerang</p>
             </div>
-            <img src="logo-tema-gkps.jpg" alt="Logo Tema GKPS" class="logo-tema">
+            <img src="logo-tema-gkps.jpg" alt="Logo Tema GKPS" class="logo-tema" onerror="this.src='https://via.placeholder.com/110?text=TEMA'">
         </div>
         
         <div class="theme-box">
@@ -2699,6 +2699,7 @@
                 renderUI(); // Perbarui tabel dengan data asli dari Firebase
             }, (error) => {
                 console.warn("Koneksi Firebase diblokir atau gagal:", error);
+                showToast('Koneksi ke database gagal. Menggunakan data lokal.', 'warning');
             });
         }
 
@@ -2712,25 +2713,26 @@
             usersData = [...defaultUsers];
         }
 
+        // FUNGSI INI TELAH DIMODIFIKASI UNTUK MENANGKAP ERROR FIREBASE
         function saveData() {
-            try {
-                // Push to Firebase Realtime Database
-                db.ref('gsm_data_2026').set({
-                    programs: programsData,
-                    finance: financeData,
-                    meetings: meetingsData,
-                    notulen: notulenData,
-                    kpiSettings: kpiSettings,
-                    users: usersData
-                });
+            // Push to Firebase Realtime Database secara asinkron
+            db.ref('gsm_data_2026').set({
+                programs: programsData,
+                finance: financeData,
+                meetings: meetingsData,
+                notulen: notulenData,
+                kpiSettings: kpiSettings,
+                users: usersData
+            }).catch((error) => {
+                // MENGANGKAP ERROR ASINKRON DARI FIREBASE (Misal: Permission Denied, Kuota Habis, dll)
+                console.error("Save failed", error);
+                showToast('Gagal menyimpan data ke server: ' + error.message, 'error');
+            });
 
-                updateStats();
-                updateStorageWarning();
-                return true;
-            } catch (e) {
-                console.error("Save failed", e);
-                return false;
-            }
+            // Optimistic UI update (memperbarui tampilan seolah-olah sudah tersimpan sukses)
+            updateStats();
+            updateStorageWarning();
+            return true;
         }
 
         function resetData() {
@@ -2745,6 +2747,8 @@
                     saveData(); // Push defaults to Firebase
                     showToast('Data berhasil direset!', 'success');
                     logoutAdmin();
+                }).catch(error => {
+                    showToast('Gagal mereset data: ' + error.message, 'error');
                 });
             }
         }
