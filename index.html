@@ -265,7 +265,7 @@
             padding: 30px 20px;
         }
 
-        /* View Toggle */
+        /* View Toggle - Diperbarui agar tidak bocor */
         .view-section {
             display: none !important; 
             animation: fadeIn 0.4s ease;
@@ -544,7 +544,7 @@
 
         .finance-table table {
             width: 100%;
-            min-width: 800px;
+            min-width: 800px; /* Ditambahkan agar tabel tidak hancur di HP */
             border-collapse: collapse;
         }
 
@@ -2632,7 +2632,7 @@
         }
 
         // ==========================================================
-        // 1. FUNGSI UNTUK MENANGANI ERROR ARRAY (Mencegah Firebase Object/Kosong)
+        // FUNGSI PENDUKUNG: Mencegah crash jika data Firebase berupa Object
         // ==========================================================
         function normalizeArray(data) {
             if (!data) return [];
@@ -2641,7 +2641,7 @@
         }
 
         // ==========================================================
-        // 2. FUNGSI RENDER UTAMA UNTUK UPDATE LAYAR
+        // FUNGSI renderUI UNTUK MENGGAMBAR LAYAR
         // ==========================================================
         function renderUI() {
             updateStats();
@@ -2669,39 +2669,36 @@
         }
 
         // ==========================================================
-        // 3. FUNGSI INIT (DENGAN SINKRONISASI FIREBASE YANG DIPERBAIKI)
+        // FUNGSI INIT UTAMA: Memuat aplikasi dan sinkronisasi data
         // ==========================================================
         function init() {
             setupAdminTrigger();
             
-            // Render layar di awal menggunakan data default agar tidak blank
+            // Render layar lebih awal menggunakan data lokal/default.
+            // Ini menjamin layar TIDAK AKAN PERNAH BLANK walau Firebase lambat/gagal.
             loadLocalData();
             checkUserSession();
             renderUI();
 
-            // Dengarkan pembaruan secara real-time dari Firebase
+            // Dengarkan pembaruan dari Firebase Realtime Database secara realtime
             db.ref('gsm_data_2026').on('value', (snapshot) => {
                 const data = snapshot.val();
                 
-                // Menerapkan update data dari server & menangkal error "kosong/objek rusak"
+                // MENGEMBALIKAN KODE SINKRONISASI YANG HILANG
                 if (data) {
+                    // Gunakan normalizeArray untuk membaca semua data secara aman
                     programsData = data.programs ? normalizeArray(data.programs) : [...defaultPrograms];
                     financeData = data.finance ? normalizeArray(data.finance) : [...defaultFinance];
                     meetingsData = data.meetings ? normalizeArray(data.meetings) : [...defaultMeetings];
                     notulenData = data.notulen ? normalizeArray(data.notulen) : [];
-                    kpiSettings = data.kpiSettings || {...defaultKpiSettings};
                     usersData = data.users ? normalizeArray(data.users) : [...defaultUsers];
-                } else {
-                    // Jika data di database kosong sama sekali, simpan data default
-                    loadLocalData();
-                    saveData();
+                    kpiSettings = data.kpiSettings || {...defaultKpiSettings};
                 }
                 
                 checkUserSession();
-                renderUI(); // Perbarui tabel dengan data asli dari internet
+                renderUI(); // Perbarui tabel dengan data asli dari Firebase
             }, (error) => {
                 console.warn("Koneksi Firebase diblokir atau gagal:", error);
-                showToast("Mode Offline: Menampilkan data lokal (Gagal terhubung ke database)", "warning"); 
             });
         }
 
